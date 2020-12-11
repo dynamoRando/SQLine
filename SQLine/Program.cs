@@ -11,7 +11,7 @@ namespace SQLine
 
             Console.WriteLine($"SQL Line v{Assembly.GetExecutingAssembly().GetName().Version}");
            
-            while (App.KeepRunning)
+            while (App._keepRunning)
             {
                 app.MainMenu();
             }

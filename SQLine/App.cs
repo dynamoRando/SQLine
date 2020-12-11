@@ -8,8 +8,10 @@ namespace SQLine
 {
     class App
     {
-        public static bool KeepRunning = true;
-        public static string currentDatabase = string.Empty;
+        public static bool _keepRunning = true;
+        public static string _currentDatabase = string.Empty;
+        public static string _serverName = string.Empty;
+        public static List<string> _databases = new List<string>();
 
         public void MainMenu()
         {
@@ -27,19 +29,26 @@ namespace SQLine
         public void Connect(string serverName)
         {
             Console.WriteLine($"Connecting to {serverName}");
+            GetDatabases(serverName);
+            _serverName = serverName;
+        }
 
+        public void GetDatabases(string serverName)
+        {
             var connString = $"Server={serverName};Database=master;Trusted_Connection = True;";
-
             using (var conn = new SqlConnection(connString))
             using (var comm = new SqlCommand($"SELECT * FROM sys.databases", conn))
             {
                 conn.Open();
+                _databases.Clear();
                 Console.WriteLine($"Listing databases...");
                 using (SqlDataReader reader = comm.ExecuteReader())
                 {
                     while (reader.Read())
                     {
-                        Console.WriteLine("- " + reader["name"].ToString());
+                        string dbName = reader["name"].ToString();
+                        _databases.Add(dbName);
+                        Console.WriteLine($"- {dbName}");
                     }
                 }
             }
@@ -47,13 +56,27 @@ namespace SQLine
 
         private string ReadPrompt()
         {
-            Console.Write("-> ");
-            string result = Console.ReadLine();
+            if (string.IsNullOrEmpty(_serverName))
+            {
+                Console.Write("-> ");
+            }
+            else
+            {
+                Console.ForegroundColor = ConsoleColor.White;
+                Console.BackgroundColor = ConsoleColor.DarkBlue;
+                Console.Write(_serverName);
+                Console.ForegroundColor = ConsoleColor.Gray;
+                Console.BackgroundColor = ConsoleColor.Black;
+                Console.Write(" -> ");
+            }
+            
+            string result = Console.ReadLine().Trim();
 
             if (string.Equals(result, "exit"))
             {
-                KeepRunning = false;
+                _keepRunning = false;
                 Console.WriteLine("Exiting...");
+                Environment.Exit(0);
             }
 
             return result;
