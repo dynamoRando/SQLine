@@ -16,31 +16,31 @@ namespace SQLine
 {
     class App
     {
-        public static string _currentDatabase = string.Empty;
-        public static string _serverName = string.Empty;
+        public static string _currentDatabase;
+        public static string _serverName;
         public static List<string> _databases = new List<string>();
+        public static AppMode _mode;
 
-        public void MainMenu()
+        public App()
+        {
+            _mode = AppMode.PendingConnection;
+        }
+
+        internal static void MainMenu()
         {
             Console.WriteLine($"Enter a server name to connect to or localhost to connect to an instance locally");
-            Console.WriteLine($"Write 'exit' to exit the app at any time");
-
-            var server = ReadPrompt();
-
-            if (!string.IsNullOrEmpty(server))
-            {
-                Connect(server);
-            }
+            Console.WriteLine($"Connection will use Trusted Connection");
+            Program.ShowPrefix();
         }
 
-        public void Connect(string serverName)
+        internal static void Connect(string serverName)
         {
             Console.WriteLine($"Connecting to {serverName}");
-            GetDatabases(serverName);
             _serverName = serverName;
+            GetDatabases(serverName);
         }
 
-        public void GetDatabases(string serverName)
+        internal static void GetDatabases(string serverName)
         {
             var connString = $"Server={serverName};Database=master;Trusted_Connection = True;";
             using (var conn = new SqlConnection(connString))
@@ -59,9 +59,12 @@ namespace SQLine
                     }
                 }
             }
+
+            _mode = AppMode.ConnectedToServer;
+            Program.ShowPrefix();
         }
 
-        public string ReadPrompt()
+        internal static string ReadPrompt()
         {
             if (string.IsNullOrEmpty(_serverName))
             {
@@ -76,7 +79,7 @@ namespace SQLine
                 Console.BackgroundColor = ConsoleColor.Black;
                 Console.Write(" -> ");
             }
-            
+
             string result = Console.ReadLine().Trim();
 
             if (string.Equals(result, "exit"))
