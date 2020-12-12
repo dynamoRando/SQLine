@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Reflection;
+using System.Runtime.CompilerServices;
 using System.Text;
 
 //UI example taken from:
@@ -15,7 +16,7 @@ namespace SQLine
     class Program
     {
         static StringBuilder _builder = new StringBuilder();
-        static string prefix = "-> ";
+        static string _prefix = "-> ";
 
         static void Main(string[] args)
         {
@@ -63,20 +64,42 @@ namespace SQLine
             ConsoleColor currentForeground = Console.ForegroundColor;
             ConsoleColor currentBackground = Console.BackgroundColor;
 
-            if (App._mode == AppMode.ConnectedToServer)
+            switch(App._mode)
             {
-                Console.ForegroundColor = ConsoleColor.White;
-                Console.BackgroundColor = ConsoleColor.DarkBlue;
-                Console.Write(App._serverName);
-                Console.ForegroundColor = currentForeground;
-                Console.BackgroundColor = currentBackground;
-                Console.Write(" " + prefix);
+                case AppMode.ConnectedToServer:
+                    WriteServerPrefix();
+                    WriteEndingPrefix(currentForeground, currentBackground);
+                    break;
+                case AppMode.UsingDatabase:
+                    WriteServerPrefix();
+                    WriteDatabasePrefix();
+                    WriteEndingPrefix(currentForeground, currentBackground);
+                    break;
+                default:
+                    Console.Write(_prefix);
+                    break;
             }
-            else
-            {
-                Console.Write(prefix);
-            }
+        }
 
+        private static void WriteDatabasePrefix()
+        {
+            Console.ForegroundColor = ConsoleColor.White;
+            Console.BackgroundColor = ConsoleColor.DarkGreen;
+            Console.Write(App._currentDatabase);
+        }
+
+        private static void WriteEndingPrefix(ConsoleColor foreground, ConsoleColor background)
+        {
+            Console.ForegroundColor = foreground;
+            Console.BackgroundColor = background;
+            Console.Write(" " + _prefix);
+        }
+
+        private static void WriteServerPrefix()
+        {
+            Console.ForegroundColor = ConsoleColor.White;
+            Console.BackgroundColor = ConsoleColor.DarkBlue;
+            Console.Write(App._serverName);
         }
 
         /// <remarks>
@@ -93,7 +116,16 @@ namespace SQLine
         private static void HandleTabInput(IEnumerable<string> data)
         {
             var currentInput = _builder.ToString();
-            var match = data.FirstOrDefault(item => item != currentInput && item.StartsWith(currentInput, true, CultureInfo.InvariantCulture));
+            string match = string.Empty;
+
+            if (App._mode == AppMode.ConnectedToServer)
+            {
+                currentInput = currentInput.Replace("use", string.Empty).Trim();
+
+                // to do: need to cycle thru matches
+
+                match = App._databases.FirstOrDefault(item => item != currentInput && item.StartsWith(currentInput, true, CultureInfo.InvariantCulture));
+            }
             if (string.IsNullOrEmpty(match))
             {
                 return;
@@ -102,8 +134,16 @@ namespace SQLine
             ClearCurrentLine();
             _builder.Clear();
 
-            Console.Write(match);
-            _builder.Append(match);
+            if (App._mode == AppMode.ConnectedToServer)
+            {
+                string line = "use " + match;
+                _builder.Append(line);
+            }
+            else
+            {
+                Console.Write(match);
+                _builder.Append(match);
+            }
         }
 
         private static void HandleEnterKeyInput()
@@ -112,6 +152,10 @@ namespace SQLine
             if (App._mode == AppMode.PendingConnection)
             {
                 App.Connect(_builder.ToString());
+            }
+            else
+            {
+                App.ParseCommand(_builder.ToString());
             }
         }
 

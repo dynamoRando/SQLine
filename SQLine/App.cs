@@ -40,6 +40,22 @@ namespace SQLine
             GetDatabases(serverName);
         }
 
+        internal static void ParseCommand(string command)
+        {
+            if (App._mode == AppMode.ConnectedToServer && command.StartsWith("use "))
+            {
+                string dbName = command.Replace("use", string.Empty).Trim();
+                SetDatabase(dbName);
+                Program.ShowPrefix();
+            }
+        }
+
+        internal static void SetDatabase(string databaseName)
+        {
+            _currentDatabase = databaseName;
+            App._mode = AppMode.UsingDatabase;
+        }
+
         internal static void GetDatabases(string serverName)
         {
             var connString = $"Server={serverName};Database=master;Trusted_Connection = True;";
@@ -64,31 +80,5 @@ namespace SQLine
             Program.ShowPrefix();
         }
 
-        internal static string ReadPrompt()
-        {
-            if (string.IsNullOrEmpty(_serverName))
-            {
-                Console.Write("-> ");
-            }
-            else
-            {
-                Console.ForegroundColor = ConsoleColor.White;
-                Console.BackgroundColor = ConsoleColor.DarkBlue;
-                Console.Write(_serverName);
-                Console.ForegroundColor = ConsoleColor.Gray;
-                Console.BackgroundColor = ConsoleColor.Black;
-                Console.Write(" -> ");
-            }
-
-            string result = Console.ReadLine().Trim();
-
-            if (string.Equals(result, "exit"))
-            {
-                Console.WriteLine("Exiting...");
-                Environment.Exit(0);
-            }
-
-            return result;
-        }
     }
 }
