@@ -25,22 +25,14 @@ namespace SQLine
             Console.WriteLine("Press Esc to exit");
             Console.WriteLine();
             App.MainMenu();
-
-            var data = new[]
-            {
-            "Bar",
-            "Barbec",
-            "Barbecue",
-            "Batman",
-        };
-                       
+          
             var input = Console.ReadKey(intercept: true);
 
             while (input.Key != ConsoleKey.Escape)
             {
                 if (input.Key == ConsoleKey.Tab)
                 {
-                    HandleTabInput(data);
+                    HandleTabInput();
                 }
                 if (input.Key == ConsoleKey.Enter)
                 {
@@ -49,7 +41,7 @@ namespace SQLine
                 }
                 else
                 {
-                    HandleKeyInput(data, input);
+                    HandleKeyInput(input);
                 }
 
                 input = Console.ReadKey(intercept: true);
@@ -111,7 +103,7 @@ namespace SQLine
             Console.SetCursorPosition(0, currentLine);
         }
 
-        private static void HandleTabInput(IEnumerable<string> data)
+        private static void HandleTabInput()
         {
             var currentInput = _builder.ToString();
             string match = string.Empty;
@@ -160,7 +152,7 @@ namespace SQLine
             }
         }
 
-        private static void HandleKeyInput(IEnumerable<string> data, ConsoleKeyInfo input)
+        private static void HandleKeyInput(ConsoleKeyInfo input)
         {
             string currentInput = _builder.ToString();
             if (input.Key == ConsoleKey.Backspace && currentInput.Length > 0)
