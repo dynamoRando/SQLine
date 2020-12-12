@@ -123,9 +123,12 @@ namespace SQLine
                 currentInput = currentInput.Replace("use", string.Empty).Trim();
 
                 // to do: need to cycle thru matches
+                // will need to get a list of databases that starts with 
+                // and then for each tab press cycle thru them
 
                 match = App._databases.FirstOrDefault(item => item != currentInput && item.StartsWith(currentInput, true, CultureInfo.InvariantCulture));
             }
+
             if (string.IsNullOrEmpty(match))
             {
                 return;
