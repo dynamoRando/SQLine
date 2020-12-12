@@ -8,8 +8,6 @@ using System.Text;
 
 //UI example taken from:
 //https://codereview.stackexchange.com/questions/139172/autocompleting-console-input
-//clear console line
-//https://stackoverflow.com/questions/8946808/can-console-clear-be-used-to-only-clear-a-line-instead-of-whole-console
 
 namespace SQLine
 {
