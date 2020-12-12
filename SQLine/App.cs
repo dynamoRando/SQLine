@@ -4,11 +4,18 @@ using System.Text;
 using System.Data;
 using System.Data.SqlClient;
 
+/*
+    * May you do good and not evil.
+    * May you find forgiveness for yourself and forgive others.
+    * May you share freely, never taking more than you give.
+    * 
+    * Obediently yours.
+*/
+
 namespace SQLine
 {
     class App
     {
-        public static bool _keepRunning = true;
         public static string _currentDatabase = string.Empty;
         public static string _serverName = string.Empty;
         public static List<string> _databases = new List<string>();
@@ -54,7 +61,7 @@ namespace SQLine
             }
         }
 
-        private string ReadPrompt()
+        public string ReadPrompt()
         {
             if (string.IsNullOrEmpty(_serverName))
             {
@@ -74,7 +81,6 @@ namespace SQLine
 
             if (string.Equals(result, "exit"))
             {
-                _keepRunning = false;
                 Console.WriteLine("Exiting...");
                 Environment.Exit(0);
             }
