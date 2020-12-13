@@ -12,5 +12,6 @@ namespace SQLine
         public string SchemaName = string.Empty;
         public string TableName = string.Empty;
         public BigInteger ObjectId = 0;
+        public List<ColumnInfo> Columns = new List<ColumnInfo>();
     }
 }
