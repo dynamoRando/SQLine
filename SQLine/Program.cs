@@ -126,33 +126,36 @@ namespace SQLine
 
             if (App._mode == AppMode.ConnectedToServer || App._mode == AppMode.UsingDatabase)
             {
-                currentInput = currentInput.Replace("use", string.Empty).Trim();
-
-                var matches = App._databases.Where(item => item != currentInput && item.StartsWith(currentInput, true, CultureInfo.InvariantCulture));
-                _tabCount++;
-
-                if (_tabCount <= matches.Count())
+                if (currentInput.StartsWith("use"))
                 {
-                    outputItem = matches.ToList()[_tabCount - 1];
-                }
-                else if (_tabCount > matches.Count())
-                {
-                    _tabCount -= matches.Count();
-                    outputItem = matches.ToList()[_tabCount - 1];
-                }
-
-                ClearCurrentLine();
-                ShowPrefix();
-                string line = "use " + outputItem;
-                _builder.Clear();
-                _builder.Append(line);
-                Console.Write(_builder.ToString());
-
-                if (string.IsNullOrEmpty(outputItem))
-                {
-                    return;
+                    HandleTabUseDatabase(currentInput, outputItem);
                 }
             }
+        }
+
+        private static void HandleTabUseDatabase(string currentInput, string outputItem)
+        {
+            currentInput = currentInput.Replace("use", string.Empty).Trim();
+
+            var matches = App._databases.Where(item => item != currentInput && item.StartsWith(currentInput, true, CultureInfo.InvariantCulture));
+            _tabCount++;
+
+            if (_tabCount <= matches.Count())
+            {
+                outputItem = matches.ToList()[_tabCount - 1];
+            }
+            else if (_tabCount > matches.Count())
+            {
+                _tabCount -= matches.Count();
+                outputItem = matches.ToList()[_tabCount - 1];
+            }
+
+            ClearCurrentLine();
+            ShowPrefix();
+            string line = "use " + outputItem;
+            _builder.Clear();
+            _builder.Append(line);
+            Console.Write(_builder.ToString());
         }
 
         private static void HandleEnterKeyInput()
