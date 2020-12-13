@@ -42,7 +42,7 @@ namespace SQLine
 
         internal static void ParseCommand(string command)
         {
-            if (App._mode == AppMode.ConnectedToServer && command.StartsWith("use "))
+            if ((App._mode == AppMode.ConnectedToServer || App._mode == AppMode.UsingDatabase) && command.StartsWith("use "))
             {
                 string dbName = command.Replace("use", string.Empty).Trim();
                 SetDatabase(dbName);

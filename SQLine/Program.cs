@@ -15,6 +15,8 @@ namespace SQLine
     {
         static StringBuilder _builder = new StringBuilder();
         static string _prefix = "-> ";
+        static int _tabCount = 0;
+        static string _tabPrefix = string.Empty;
 
         static void Main(string[] args)
         {
@@ -25,25 +27,25 @@ namespace SQLine
             Console.WriteLine("Press Esc to exit");
             Console.WriteLine();
             App.MainMenu();
-          
+
             var input = Console.ReadKey(intercept: true);
 
             while (input.Key != ConsoleKey.Escape)
             {
-                if (input.Key == ConsoleKey.Tab)
+                switch(input.Key)
                 {
-                    HandleTabInput();
+                    case ConsoleKey.Tab:
+                        HandleTabInput();
+                        break;
+                    case ConsoleKey.Enter:
+                        HandleEnterKeyInput();
+                        _builder.Clear();
+                        break;
+                    default:
+                        HandleKeyInput(input);
+                        break;
                 }
-                if (input.Key == ConsoleKey.Enter)
-                {
-                    HandleEnterKeyInput();
-                    _builder.Clear();
-                }
-                else
-                {
-                    HandleKeyInput(input);
-                }
-
+                
                 input = Console.ReadKey(intercept: true);
             }
             Console.Write(input.KeyChar);
@@ -54,7 +56,7 @@ namespace SQLine
             ConsoleColor currentForeground = Console.ForegroundColor;
             ConsoleColor currentBackground = Console.BackgroundColor;
 
-            switch(App._mode)
+            switch (App._mode)
             {
                 case AppMode.ConnectedToServer:
                     WriteServerPrefix();
@@ -62,6 +64,7 @@ namespace SQLine
                     break;
                 case AppMode.UsingDatabase:
                     WriteServerPrefix();
+                    WriteSpacer(currentForeground, currentBackground);
                     WriteDatabasePrefix();
                     WriteEndingPrefix(currentForeground, currentBackground);
                     break;
@@ -69,6 +72,13 @@ namespace SQLine
                     Console.Write(_prefix);
                     break;
             }
+        }
+
+        private static void WriteSpacer(ConsoleColor foreground, ConsoleColor background)
+        {
+            Console.ForegroundColor = foreground;
+            Console.BackgroundColor = background;
+            Console.Write(" > ");
         }
 
         private static void WriteDatabasePrefix()
@@ -105,37 +115,42 @@ namespace SQLine
 
         private static void HandleTabInput()
         {
-            var currentInput = _builder.ToString();
-            string match = string.Empty;
+            if (_tabCount == 0)
+            {
+                _tabPrefix = _builder.ToString();
+            }
+            
+            var currentInput = _tabPrefix;
+            string outputItem = string.Empty;
 
-            if (App._mode == AppMode.ConnectedToServer)
+            if (App._mode == AppMode.ConnectedToServer || App._mode == AppMode.UsingDatabase)
             {
                 currentInput = currentInput.Replace("use", string.Empty).Trim();
 
-                // to do: need to cycle thru matches
-                // will need to get a list of databases that starts with 
-                // and then for each tab press cycle thru them
+                var matches = App._databases.Where(item => item != currentInput && item.StartsWith(currentInput, true, CultureInfo.InvariantCulture));
+                _tabCount++;
 
-                match = App._databases.FirstOrDefault(item => item != currentInput && item.StartsWith(currentInput, true, CultureInfo.InvariantCulture));
-            }
+                if (_tabCount <= matches.Count())
+                {
+                    outputItem = matches.ToList()[_tabCount - 1];
+                }
+                else if (_tabCount > matches.Count())
+                {
+                    _tabCount -= matches.Count();
+                    outputItem = matches.ToList()[_tabCount - 1];
+                }
 
-            if (string.IsNullOrEmpty(match))
-            {
-                return;
-            }
-
-            ClearCurrentLine();
-            _builder.Clear();
-
-            if (App._mode == AppMode.ConnectedToServer)
-            {
-                string line = "use " + match;
+                ClearCurrentLine();
+                ShowPrefix();
+                string line = "use " + outputItem;
+                _builder.Clear();
                 _builder.Append(line);
-            }
-            else
-            {
-                Console.Write(match);
-                _builder.Append(match);
+                Console.Write(_builder.ToString());
+
+                if (string.IsNullOrEmpty(outputItem))
+                {
+                    return;
+                }
             }
         }
 
@@ -154,6 +169,9 @@ namespace SQLine
 
         private static void HandleKeyInput(ConsoleKeyInfo input)
         {
+            _tabCount = 0;
+            _tabPrefix = string.Empty;
+
             string currentInput = _builder.ToString();
             if (input.Key == ConsoleKey.Backspace && currentInput.Length > 0)
             {
