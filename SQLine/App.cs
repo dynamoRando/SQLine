@@ -25,6 +25,7 @@ namespace SQLine
         public static List<TableInfo> _tables = new List<TableInfo>();
 
         private static string _GetTablesCmd = "SELECT s.name SchemaName, t.name TableName, object_id ObjectId FROM sys.tables t inner join sys.schemas s on t.schema_id = s.schema_id";
+        private static string _GetTableSchemaCmd = "SELECT c.name ColumnName, c.max_length ColumnMaxLength, c.is_nullable IsNullable, t.name ColumnDataType FROM sys.columns c JOIN sys.types t ON c.user_type_id = t.user_type_id join sys.objects o on c.object_id = o.object_id WHERE o.object_id = <objectId>";
 
         public App()
         {
@@ -64,6 +65,7 @@ namespace SQLine
             Console.WriteLine($"Type '? dbs update' to update cache first and list all databases on the server");
             Console.WriteLine($"Type '? t/v/s update' to to update cache of all tables/views/sprocs in the current database - not fully implemented");
             Console.WriteLine($"Type '? t/v/s <prefix>' to list all tables/views/sprocs in the current database, or those with specified prefix - not fully implemented");
+            Console.WriteLine($"Type '? t/v s' to show schema details of the table/view - not fully implemented");
             Console.WriteLine($"Type 'q '<query text>' to execute a query against the current database - not implemented");
             Console.WriteLine($"Type 'o table/csv to change the preferred output from table format to CSV format - not implemented");
             Console.WriteLine($"Press Ctrl+Q to enter query mode - not implemented");
@@ -133,7 +135,6 @@ namespace SQLine
                 {
                     PendingConnectionHelpMenu();
                 }
-
             }
 
             if (App._mode == AppMode.ConnectedToServer)
