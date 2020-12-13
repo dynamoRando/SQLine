@@ -27,6 +27,7 @@ namespace SQLine
             Console.WriteLine("Press Esc to exit");
             Console.WriteLine();
             App.MainMenu();
+            ShowPrefix();
 
             var input = Console.ReadKey(intercept: true);
 
@@ -157,7 +158,7 @@ namespace SQLine
         private static void HandleEnterKeyInput()
         {
             Console.WriteLine();
-            if (App._mode == AppMode.PendingConnection)
+            if (App._mode == AppMode.PendingConnection && _builder.ToString() != "?")
             {
                 App.Connect(_builder.ToString());
             }
@@ -165,6 +166,8 @@ namespace SQLine
             {
                 App.ParseCommand(_builder.ToString());
             }
+
+            Program.ShowPrefix();
         }
 
         private static void HandleKeyInput(ConsoleKeyInfo input)
