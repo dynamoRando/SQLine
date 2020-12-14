@@ -18,28 +18,17 @@ namespace SQLine
 {
     class App
     {
-        public static string _currentDatabase;
-        public static string _serverName;
-        public static List<string> _databases = new List<string>();
-        public static AppMode _mode;
-        public static List<TableInfo> _tables = new List<TableInfo>();
+        #region Private Fields
+        #endregion
 
-        private static string _GetTablesCmd = "SELECT s.name SchemaName, t.name TableName, object_id ObjectId FROM sys.tables t inner join sys.schemas s on t.schema_id = s.schema_id";
-        private static string _GetTableSchemaCmd = "SELECT c.name ColumnName, c.max_length ColumnMaxLength, c.is_nullable IsNullable, t.name ColumnDataType FROM sys.columns c JOIN sys.types t ON c.user_type_id = t.user_type_id join sys.objects o on c.object_id = o.object_id WHERE o.object_id = <objectId>";
+        #region Public Properties
+        public static AppMode Mode { get; set; }
+        #endregion
 
-        public App()
-        {
-            _mode = AppMode.PendingConnection;
-        }
+        #region Constructors
+        #endregion
 
-        internal static void PendingConnectionHelpMenu()
-        {
-            Console.WriteLine($"Press Esc at any time to exit program");
-            Console.WriteLine($"Enter a server name to connect to or 'localhost' to connect to an instance locally");
-            Console.WriteLine($"Connection will use default to Trusted Connection");
-            Console.WriteLine($"Type '?' at any time to show a list of available commands");
-        }
-
+        #region Public Methods
         internal static void MainMenu()
         {
             Console.WriteLine($"Press Esc at any time to exit program");
@@ -47,58 +36,36 @@ namespace SQLine
             Console.WriteLine($"Connection will use default to Trusted Connection");
             Console.WriteLine($"Type '?' at any time to show a list of available commands");
         }
+        #endregion
 
-        internal static void ConnectedToServerHelpMenu()
-        {
-            Console.WriteLine($"Press Esc at any time to exit program");
-            Console.WriteLine($"Enter 'use' followed by a database name to switch your session to a specific database. Use Tab for autocomplete.");
-            Console.WriteLine($"Type '? dbs' to list all databases on the server");
-            Console.WriteLine($"Type '? dbs update' to update cache first and list all databases on the server");
-            Console.WriteLine($"Type '?' at any time to show a list of available commands");
-        }
-
-        internal static void UsingDatabaseHelpMenu()
-        {
-            Console.WriteLine($"Press Esc at any time to exit program");
-            Console.WriteLine($"Press 'cn <prefix> to connect to a different server. Use Tab for autocomplete (uses connection history/preferences). - not implemented");
-            Console.WriteLine($"Enter 'use' followed by a database name to switch your session to a specific database.  Use Tab for autocomplete.");
-            Console.WriteLine($"Type '? dbs' to list all databases on the server");
-            Console.WriteLine($"Type '? dbs update' to update cache first and list all databases on the server");
-            Console.WriteLine($"Type '? t/v/sp update' to to update cache of all tables/views/sprocs in the current database - not fully implemented");
-            Console.WriteLine($"Type '? t/v/sp <prefix>' to list all tables/views/sprocs in the current database, or those with specified prefix - not fully implemented");
-            Console.WriteLine($"Type '? t/v s <prefix>' to show schema details of the table/view - not fully implemented");
-            Console.WriteLine($"Type 'q <query text>' to execute a query against the current database - not implemented");
-            Console.WriteLine($"Type 'o table/csv to change the preferred output from table format to CSV format - not implemented");
-            Console.WriteLine($"Press Ctrl+Q to enter query mode - not implemented");
-            Console.WriteLine($"Press Ctrl+E to execute the currently cached query against the current database - not implemented");
-            Console.WriteLine($"Type '?' at any time to show a list of available commands");
-        }
+        #region Private Methods
+        #endregion
 
         internal static void Connect(string serverName)
         {
             Console.WriteLine($"Connecting to {serverName}");
-            _serverName = serverName;
+            AppCache.ServerName = serverName;
             GetDatabases(serverName);
         }
 
         internal static void GetTableSchema(string tableName)
         {
-            if (_tables.Count == 0)
+            if (AppCache.Tables.Count == 0)
             {
                 GetTables();
             }
 
-            var table = _tables.FirstOrDefault(t => t.TableName == tableName);
+            var table = AppCache.Tables.FirstOrDefault(t => t.TableName == tableName);
 
             if (table != null)
             {
-                var connString = $"Server={_serverName};Database={_currentDatabase};Trusted_Connection = True;";
+                var connString = $"Server={AppCache.ServerName};Database={AppCache.CurrentDatabase};Trusted_Connection = True;";
                 using (var conn = new SqlConnection(connString))
-                using (var comm = new SqlCommand(_GetTableSchemaCmd.Replace("<objectId>", table.ObjectId.ToString()), conn))
+                using (var comm = new SqlCommand(AppSQLCommand.GetTablesSchema.Replace("<objectId>", table.ObjectId.ToString()), conn))
                 {
                     conn.Open();
                     table.Columns.Clear();
-                    Console.WriteLine($"Connected to {_serverName} - {_currentDatabase}, getting tables...");
+                    Console.WriteLine($"Connected to {AppCache.ServerName} - {AppCache.CurrentDatabase}, getting tables...");
                     using (SqlDataReader reader = comm.ExecuteReader())
                     {
                         while (reader.Read())
@@ -117,11 +84,11 @@ namespace SQLine
 
         internal static void ParseCommand(string command)
         {
-            if (App._mode == AppMode.UsingDatabase)
+            if (App.Mode == AppMode.UsingDatabase)
             {
                 if (command == "?")
                 {
-                    UsingDatabaseHelpMenu();
+                    HelpMenu.UsingDatabase();
                 }
 
                 if (command.StartsWith("use "))
@@ -137,12 +104,12 @@ namespace SQLine
 
                 if (command == "? dbs update")
                 {
-                    GetDatabases(_serverName);
+                    GetDatabases(AppCache.ServerName);
                 }
 
                 if (command.StartsWith("? t"))
                 {
-                    if (_tables.Count == 0)
+                    if (AppCache.Tables.Count == 0)
                     {
                         GetTables();
                     }
@@ -165,19 +132,19 @@ namespace SQLine
                 }
             }
 
-            if (App._mode == AppMode.PendingConnection)
+            if (App.Mode == AppMode.PendingConnection)
             {
                 if (command == "?")
                 {
-                    PendingConnectionHelpMenu();
+                    HelpMenu.PendingConnection();
                 }
             }
 
-            if (App._mode == AppMode.ConnectedToServer)
+            if (App.Mode == AppMode.ConnectedToServer)
             {
                 if (command == "?")
                 {
-                    ConnectedToServerHelpMenu();
+                    HelpMenu.ConnectedToServer();
                 }
 
                 if (command.StartsWith("use "))
@@ -193,22 +160,21 @@ namespace SQLine
 
                 if (command == "? dbs update")
                 {
-                    GetDatabases(_serverName);
+                    GetDatabases(AppCache.ServerName);
                 }
             }
         }
 
-
         internal static void SetDatabase(string databaseName)
         {
-            _currentDatabase = databaseName;
-            App._mode = AppMode.UsingDatabase;
+            AppCache.CurrentDatabase = databaseName;
+            App.Mode = AppMode.UsingDatabase;
         }
 
         internal static void ListCachedDatabases()
         {
-            Console.WriteLine($"Listing databases on server {_serverName}");
-            foreach (var dbName in _databases)
+            Console.WriteLine($"Listing databases on server {AppCache.ServerName}");
+            foreach (var dbName in AppCache.Databases)
             {
                 Console.WriteLine($"- {dbName}");
             }
@@ -218,16 +184,16 @@ namespace SQLine
         {
             if (string.IsNullOrEmpty(prefix))
             {
-                Console.WriteLine($"Listing tables from database {_currentDatabase} on server {_serverName}");
-                foreach (var table in _tables)
+                Console.WriteLine($"Listing tables from database {AppCache.CurrentDatabase} on server {AppCache.ServerName}");
+                foreach (var table in AppCache.Tables)
                 {
                     Console.WriteLine($"- {table.SchemaName}.{table.TableName}");
                 }
             }
             else
             {
-                Console.WriteLine($"Listing tables from database {_currentDatabase} on server {_serverName} with prefix '{prefix}'");
-                var tables = _tables.Where(t => t.TableName.StartsWith(prefix, true, CultureInfo.InvariantCulture)).ToList();
+                Console.WriteLine($"Listing tables from database {AppCache.CurrentDatabase} on server {AppCache.ServerName} with prefix '{prefix}'");
+                var tables = AppCache.Tables.Where(t => t.TableName.StartsWith(prefix, true, CultureInfo.InvariantCulture)).ToList();
                 foreach (var table in tables)
                 {
                     Console.WriteLine($"- {table.SchemaName}.{table.TableName}");
@@ -237,13 +203,13 @@ namespace SQLine
 
         internal static void GetTables()
         {
-            var connString = $"Server={_serverName};Database={_currentDatabase};Trusted_Connection = True;";
+            var connString = $"Server={AppCache.ServerName};Database={AppCache.CurrentDatabase};Trusted_Connection = True;";
             using (var conn = new SqlConnection(connString))
-            using (var comm = new SqlCommand(_GetTablesCmd, conn))
+            using (var comm = new SqlCommand(AppSQLCommand.GetTables, conn))
             {
                 conn.Open();
-                _tables.Clear();
-                Console.WriteLine($"Connected to {_serverName} - {_currentDatabase}, getting tables...");
+                AppCache.Tables.Clear();
+                Console.WriteLine($"Connected to {AppCache.ServerName} - {AppCache.CurrentDatabase}, getting tables...");
                 using (SqlDataReader reader = comm.ExecuteReader())
                 {
                     while (reader.Read())
@@ -252,7 +218,7 @@ namespace SQLine
                         table.TableName = reader["TableName"].ToString();
                         table.SchemaName = reader["SchemaName"].ToString();
                         table.ObjectId = Convert.ToInt32(reader["ObjectId"]);
-                        _tables.Add(table);
+                        AppCache.Tables.Add(table);
                     }
                 }
             }
@@ -265,28 +231,28 @@ namespace SQLine
             using (var comm = new SqlCommand($"SELECT * FROM sys.databases", conn))
             {
                 conn.Open();
-                _databases.Clear();
+                AppCache.Databases.Clear();
                 Console.WriteLine($"Connected to {serverName} - reading databases...");
                 using (SqlDataReader reader = comm.ExecuteReader())
                 {
                     while (reader.Read())
                     {
                         string dbName = reader["name"].ToString();
-                        _databases.Add(dbName);
+                        AppCache.Databases.Add(dbName);
                     }
                 }
             }
 
             ListCachedDatabases();
 
-            _mode = AppMode.ConnectedToServer;
+            Mode = AppMode.ConnectedToServer;
         }
 
         internal static void ShowTableSchema(string prefix)
         {
-            var table = _tables.FirstOrDefault(t => t.TableName == prefix);
+            var table = AppCache.Tables.FirstOrDefault(t => t.TableName == prefix);
             int maxColLength = table.Columns.Select(c => c.ColumnName.Length).ToList().Max();
-            Console.WriteLine($"Showing schema for table {table.SchemaName}.{table.TableName} in database {_currentDatabase} on server {_serverName}");
+            Console.WriteLine($"Showing schema for table {table.SchemaName}.{table.TableName} in database {AppCache.CurrentDatabase} on server {AppCache.ServerName}");
             string formatter = "{0,-" + maxColLength.ToString() + "} {1,-10} {2,10} {3,-5}";
             string[] headers = { "COLUMNNAME", "DATATYPE", "MAXLENGTH", "ISNULLABLE" };
             Console.WriteLine(formatter, headers);
