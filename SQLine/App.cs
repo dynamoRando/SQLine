@@ -63,9 +63,9 @@ namespace SQLine
             Console.WriteLine($"Enter 'use' followed by a database name to switch your session to a specific database.  Use Tab for autocomplete.");
             Console.WriteLine($"Type '? dbs' to list all databases on the server");
             Console.WriteLine($"Type '? dbs update' to update cache first and list all databases on the server");
-            Console.WriteLine($"Type '? t/v/s update' to to update cache of all tables/views/sprocs in the current database - not fully implemented");
-            Console.WriteLine($"Type '? t/v/s <prefix>' to list all tables/views/sprocs in the current database, or those with specified prefix - not fully implemented");
-            Console.WriteLine($"Type '? t/v s' to show schema details of the table/view - not fully implemented");
+            Console.WriteLine($"Type '? t/v/sp update' to to update cache of all tables/views/sprocs in the current database - not fully implemented");
+            Console.WriteLine($"Type '? t/v/sp <prefix>' to list all tables/views/sprocs in the current database, or those with specified prefix - not fully implemented");
+            Console.WriteLine($"Type '? t/v s <prefix>' to show schema details of the table/view - not fully implemented");
             Console.WriteLine($"Type 'q '<query text>' to execute a query against the current database - not implemented");
             Console.WriteLine($"Type 'o table/csv to change the preferred output from table format to CSV format - not implemented");
             Console.WriteLine($"Press Ctrl+Q to enter query mode - not implemented");
@@ -197,7 +197,7 @@ namespace SQLine
             }
         }
 
-        
+
         internal static void SetDatabase(string databaseName)
         {
             _currentDatabase = databaseName;
@@ -284,11 +284,15 @@ namespace SQLine
         internal static void ShowTableSchema(string prefix)
         {
             var table = _tables.FirstOrDefault(t => t.TableName == prefix);
+            int maxColLength = table.Columns.Select(c => c.ColumnName.Length).ToList().Max();
             Console.WriteLine($"Showing schema for table {table.SchemaName}.{table.TableName} in database {_currentDatabase} on server {_serverName}");
-            foreach(var column in table.Columns)
+            string formatter = "{0,-" + maxColLength.ToString() + "} {1,-10} {2,10} {3,-5}";
+            string[] headers = { "COLUMNNAME", "DATATYPE", "MAXLENGTH", "ISNULLABLE" };
+            Console.WriteLine(formatter, headers);
+            foreach (var column in table.Columns)
             {
-                Console.WriteLine($"- {column.ColumnName} | " +
-                    $"{column.DataType} | Length: {column.MaxLength.ToString()} | IsNullable: {column.IsNullable.ToString()}");
+                string[] values = { column.ColumnName, column.DataType, column.MaxLength.ToString(), column.IsNullable.ToString() };
+                Console.WriteLine(formatter, values);
             }
         }
 

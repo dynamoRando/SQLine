@@ -145,6 +145,11 @@ namespace SQLine
             var matches = App._tables.Where(item => item.TableName != currentInput && item.TableName.
             StartsWith(currentInput, true, CultureInfo.InvariantCulture)).Select(t => t.TableName);
 
+            if (matches.Count() == 0)
+            {
+                return;
+            }
+
             _tabCount++;
 
             if (_tabCount <= matches.Count())
@@ -171,6 +176,12 @@ namespace SQLine
             currentInput = currentInput.Replace("use", string.Empty).Trim();
 
             var matches = App._databases.Where(item => item != currentInput && item.StartsWith(currentInput, true, CultureInfo.InvariantCulture));
+            
+            if (matches.Count() == 0)
+            {
+                return;
+            }
+
             _tabCount++;
 
             if (_tabCount <= matches.Count())
