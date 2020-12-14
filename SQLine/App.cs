@@ -60,6 +60,7 @@ namespace SQLine
         internal static void UsingDatabaseHelpMenu()
         {
             Console.WriteLine($"Press Esc at any time to exit program");
+            Console.WriteLine($"Press 'cn <prefix> to connect to a different server. Use Tab for autocomplete (uses connection history/preferences). - not implemented");
             Console.WriteLine($"Enter 'use' followed by a database name to switch your session to a specific database.  Use Tab for autocomplete.");
             Console.WriteLine($"Type '? dbs' to list all databases on the server");
             Console.WriteLine($"Type '? dbs update' to update cache first and list all databases on the server");
