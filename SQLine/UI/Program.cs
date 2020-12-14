@@ -50,13 +50,7 @@ namespace SQLine
 
         private static void HandleTabInput()
         {
-            // if this is the first time the user has pressed the tab key, save the current entered line from the user
-            if (TabBehavior.TabCount == 0)
-            {
-                TabBehavior.TabPrefix = ConsoleInterface.Builder.ToString();
-            }
-
-            TabBehavior.HandleTab(TabBehavior.TabPrefix);
+            TabBehavior.HandleTab();
         }
 
         private static void HandleEnterKeyInput()
