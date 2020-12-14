@@ -80,6 +80,40 @@ namespace SQLine
             GetDatabases(serverName);
         }
 
+        internal static void GetTableSchema(string tableName)
+        {
+            if (_tables.Count == 0)
+            {
+                GetTables();
+            }
+
+            var table = _tables.FirstOrDefault(t => t.TableName == tableName);
+
+            if (table != null)
+            {
+                var connString = $"Server={_serverName};Database={_currentDatabase};Trusted_Connection = True;";
+                using (var conn = new SqlConnection(connString))
+                using (var comm = new SqlCommand(_GetTableSchemaCmd.Replace("<objectId>", table.ObjectId.ToString()), conn))
+                {
+                    conn.Open();
+                    table.Columns.Clear();
+                    Console.WriteLine($"Connected to {_serverName} - {_currentDatabase}, getting tables...");
+                    using (SqlDataReader reader = comm.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            var column = new ColumnInfo();
+                            column.ColumnName = reader["ColumnName"].ToString();
+                            column.MaxLength = Convert.ToInt32(reader["ColumnMaxLength"]);
+                            column.DataType = reader["ColumnDataType"].ToString();
+                            column.IsNullable = Convert.ToBoolean(reader["IsNullable"].ToString());
+                            table.Columns.Add(column);
+                        }
+                    }
+                }
+            }
+        }
+
         internal static void ParseCommand(string command)
         {
             if (App._mode == AppMode.UsingDatabase)
@@ -107,22 +141,23 @@ namespace SQLine
 
                 if (command.StartsWith("? t"))
                 {
-                    if (command == "? t")
+                    if (_tables.Count == 0)
                     {
-                        if (_tables.Count == 0)
-                        {
-                            GetTables();
-                        }
+                        GetTables();
+                    }
 
+                    if (command.StartsWith("? t s"))
+                    {
+                        string prefix = command.Replace("? t s", string.Empty).Trim();
+                        GetTableSchema(prefix);
+                        ShowTableSchema(prefix);
+                    }
+                    else if (command == "? t")
+                    {
                         ListTables(string.Empty);
                     }
                     else
                     {
-                        if (_tables.Count == 0)
-                        {
-                            GetTables();
-                        }
-
                         string prefix = command.Replace("? t", string.Empty).Trim();
                         ListTables(prefix);
                     }
@@ -162,6 +197,7 @@ namespace SQLine
             }
         }
 
+        
         internal static void SetDatabase(string databaseName)
         {
             _currentDatabase = databaseName;
@@ -244,5 +280,17 @@ namespace SQLine
 
             _mode = AppMode.ConnectedToServer;
         }
+
+        internal static void ShowTableSchema(string prefix)
+        {
+            var table = _tables.FirstOrDefault(t => t.TableName == prefix);
+            Console.WriteLine($"Showing schema for table {table.SchemaName}.{table.TableName} in database {_currentDatabase} on server {_serverName}");
+            foreach(var column in table.Columns)
+            {
+                Console.WriteLine($"- {column.ColumnName} | " +
+                    $"{column.DataType} | Length: {column.MaxLength.ToString()} | IsNullable: {column.IsNullable.ToString()}");
+            }
+        }
+
     }
 }

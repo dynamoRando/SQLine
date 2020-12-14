@@ -122,19 +122,52 @@ namespace SQLine
             }
             
             var currentInput = _tabPrefix;
-            string outputItem = string.Empty;
-
+            
             if (App._mode == AppMode.ConnectedToServer || App._mode == AppMode.UsingDatabase)
             {
                 if (currentInput.StartsWith("use"))
                 {
-                    HandleTabUseDatabase(currentInput, outputItem);
+                    HandleTabUseDatabase(currentInput);
+                }
+
+                if (currentInput.StartsWith("? t s"))
+                {
+                    HandleTabTableSchema(currentInput);
                 }
             }
         }
 
-        private static void HandleTabUseDatabase(string currentInput, string outputItem)
+        private static void HandleTabTableSchema(string currentInput)
         {
+            string outputItem = string.Empty;
+            currentInput = currentInput.Replace("? t s", string.Empty).Trim();
+
+            var matches = App._tables.Where(item => item.TableName != currentInput && item.TableName.
+            StartsWith(currentInput, true, CultureInfo.InvariantCulture)).Select(t => t.TableName);
+
+            _tabCount++;
+
+            if (_tabCount <= matches.Count())
+            {
+                outputItem = matches.ToList()[_tabCount - 1];
+            }
+            else if (_tabCount > matches.Count())
+            {
+                _tabCount -= matches.Count();
+                outputItem = matches.ToList()[_tabCount - 1];
+            }
+
+            ClearCurrentLine();
+            ShowPrefix();
+            string line = "? t s " + outputItem;
+            _builder.Clear();
+            _builder.Append(line);
+            Console.Write(_builder.ToString());
+        }
+
+        private static void HandleTabUseDatabase(string currentInput)
+        {
+            string outputItem = string.Empty;
             currentInput = currentInput.Replace("use", string.Empty).Trim();
 
             var matches = App._databases.Where(item => item != currentInput && item.StartsWith(currentInput, true, CultureInfo.InvariantCulture));
