@@ -71,11 +71,26 @@ namespace SQLine.UI
         /// <param name="currentInput">The first few letters of the database name</param>
         private static void HandleTabUseDatabase(string currentInput)
         {
-            string outputItem = string.Empty;
             currentInput = currentInput.Replace(AppCommands.USE_KEYWORD, string.Empty).Trim();
             HandleTabAutoComplete(currentInput, AppCommands.USE_KEYWORD, AppCache.Databases);
         }
 
+        /// <summary>
+        /// Attempts to auto complete the table name for displaying schema information based on the prefix provided
+        /// </summary>
+        /// <param name="currentInput">The first few letters of the table name</param>
+        private static void HandleTabTableSchema(string currentInput)
+        {
+            currentInput = currentInput.Replace(AppCommands.QUESTION_TABLE_SCHEMA, string.Empty).Trim();
+            HandleTabAutoComplete(currentInput, AppCommands.QUESTION_TABLE_SCHEMA, AppCache.Tables.Select(t => t.TableName).ToList());
+        }
+
+        /// <summary>
+        /// Renders on console screen the potential match on the line
+        /// </summary>
+        /// <param name="currentInput">The current prefix value - minus the actual command. This is the thing we'll be searching for.</param>
+        /// <param name="commandPrefix">The type of command we are processing</param>
+        /// <param name="potentialValues">A list of poential values we want to try to match to</param>
         private static void HandleTabAutoComplete(string currentInput, string commandPrefix, List<string> potentialValues)
         {
             string outputItem = string.Empty;
@@ -106,16 +121,7 @@ namespace SQLine.UI
             Console.Write(ConsoleInterface.Builder.ToString());
         }
 
-        /// <summary>
-        /// Attempts to auto complete the table name for displaying schema information based on the prefix provided
-        /// </summary>
-        /// <param name="currentInput">The first few letters of the table name</param>
-        private static void HandleTabTableSchema(string currentInput)
-        {
-            string outputItem = string.Empty;
-            currentInput = currentInput.Replace(AppCommands.QUESTION_TABLE_SCHEMA, string.Empty).Trim();
-            HandleTabAutoComplete(currentInput, AppCommands.QUESTION_TABLE_SCHEMA, AppCache.Tables.Select(t => t.TableName).ToList());
-        }
+
         #endregion
 
     }
