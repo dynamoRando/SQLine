@@ -66,7 +66,7 @@ namespace SQLine
             Console.WriteLine($"Type '? t/v/sp update' to to update cache of all tables/views/sprocs in the current database - not fully implemented");
             Console.WriteLine($"Type '? t/v/sp <prefix>' to list all tables/views/sprocs in the current database, or those with specified prefix - not fully implemented");
             Console.WriteLine($"Type '? t/v s <prefix>' to show schema details of the table/view - not fully implemented");
-            Console.WriteLine($"Type 'q '<query text>' to execute a query against the current database - not implemented");
+            Console.WriteLine($"Type 'q <query text>' to execute a query against the current database - not implemented");
             Console.WriteLine($"Type 'o table/csv to change the preferred output from table format to CSV format - not implemented");
             Console.WriteLine($"Press Ctrl+Q to enter query mode - not implemented");
             Console.WriteLine($"Press Ctrl+E to execute the currently cached query against the current database - not implemented");
