@@ -5,6 +5,7 @@ using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
 using System.Globalization;
+using SQLine.Application;
 
 /*
     * May you do good and not evil.
@@ -85,86 +86,14 @@ namespace SQLine
 
         internal static void ParseCommand(string command)
         {
-            if (App.Mode == AppMode.UsingDatabase)
+            if (command.StartsWith(AppCommands.QUESTION))
             {
-                if (command == "?")
-                {
-                    HelpMenu.UsingDatabase();
-                }
-
-                if (command.StartsWith(AppCommands.USE_KEYWORD + " "))
-                {
-                    string dbName = command.Replace(AppCommands.USE_KEYWORD, string.Empty).Trim();
-                    SetDatabase(dbName);
-                }
-
-                if (command == AppCommands.QUESTION_DATABASES)
-                {
-                    ListCachedDatabases();
-                }
-
-                if (command == AppCommands.QUESTION_DATABASES_UPDATE)
-                {
-                    GetDatabases(AppCache.ServerName);
-                }
-
-                if (command.StartsWith(AppCommands.QUESTION_TABLE))
-                {
-                    if (AppCache.Tables.Count == 0)
-                    {
-                        GetTables();
-                    }
-
-                    if (command.StartsWith(AppCommands.QUESTION_TABLE_SCHEMA))
-                    {
-                        string prefix = command.Replace(AppCommands.QUESTION_TABLE_SCHEMA, string.Empty).Trim();
-                        GetTableSchema(prefix);
-                        ShowTableSchema(prefix);
-                    }
-                    // show all tables
-                    else if (command == AppCommands.QUESTION_TABLE)
-                    {
-                        ListTables(string.Empty);
-                    }
-                    else
-                    {
-                        // show all tables with the specified prefix
-                        string prefix = command.Replace(AppCommands.QUESTION_TABLE, string.Empty).Trim();
-                        ListTables(prefix);
-                    }
-                }
+                AppCommandQuestions.HandleQuestion(command, App.Mode);
             }
 
-            if (App.Mode == AppMode.PendingConnection)
+            if (command.StartsWith(AppCommands.USE_KEYWORD + " "))
             {
-                if (command == AppCommands.QUESTION)
-                {
-                    HelpMenu.PendingConnection();
-                }
-            }
-
-            if (App.Mode == AppMode.ConnectedToServer)
-            {
-                if (command == AppCommands.QUESTION)
-                {
-                    HelpMenu.ConnectedToServer();
-                }
-
-                if (command.StartsWith(AppCommands.USE_KEYWORD + " "))
-                {
-                    string dbName = command.Replace(AppCommands.USE_KEYWORD, string.Empty).Trim();
-                    SetDatabase(dbName);
-                }
-
-                if (command == AppCommands.QUESTION_DATABASES)
-                {
-                    ListCachedDatabases();
-                }
-
-                if (command == AppCommands.QUESTION_DATABASES_UPDATE)
-                {
-                    GetDatabases(AppCache.ServerName);
-                }
+                AppCommandUse.HandleUsingCommand(command, App.Mode);
             }
         }
 
@@ -250,7 +179,6 @@ namespace SQLine
 
             Mode = AppMode.ConnectedToServer;
         }
-
         internal static void ShowTableSchema(string prefix)
         {
             var table = AppCache.Tables.FirstOrDefault(t => t.TableName == prefix);
