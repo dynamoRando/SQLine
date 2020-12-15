@@ -13,18 +13,18 @@ namespace SQLine.UI
     static class TabBehavior
     {
         #region Private Fields
-        #endregion
-
-        #region Public Properties
         /// <summary>
         /// The number of times the user has pressed the tab key
         /// </summary>
-        internal static int TabCount { get; set; } = 0;
+        private static int _tabCount = 0;
 
         /// <summary>
         /// Represents the characters entered by the user before hitting tab
         /// </summary>
-        internal static string TabPrefix { get; set; } = string.Empty;
+        internal static string _tabPrefix = string.Empty;
+        #endregion
+
+        #region Public Properties
         #endregion
 
         #region Constructors
@@ -38,29 +38,34 @@ namespace SQLine.UI
         {
             // if this is the first time the user has pressed the tab key, save the current entered line from the user
             // otherwise we want to iterate to the next value in the tab list depending on what the pending command is
-            if (TabCount == 0)
+            if (_tabCount == 0)
             {
-                TabPrefix = ConsoleInterface.Builder.ToString();
+                _tabPrefix = ConsoleInterface.Builder.ToString();
             }
 
             if (App.Mode == AppMode.ConnectedToServer || App.Mode == AppMode.UsingDatabase)
             {
-                if (TabPrefix.StartsWith(AppCommands.USE_KEYWORD))
+                if (_tabPrefix.StartsWith(AppCommands.USE_KEYWORD))
                 {
-                    HandleTabUseDatabase(TabPrefix);
+                    HandleTabUseDatabase(_tabPrefix);
                 }
 
-                if (TabPrefix.StartsWith(AppCommands.QUESTION_TABLE_SCHEMA))
+                if (_tabPrefix.StartsWith(AppCommands.QUESTION_TABLE_SCHEMA))
                 {
-                    HandleTabTableSchema(TabPrefix);
+                    HandleTabTableSchema(_tabPrefix);
                 }
             }
         }
 
+        internal static void IncrementTabCount()
+        {
+            _tabCount++;
+        }
+
         internal static void ResetTabValues()
         {
-            TabCount = 0;
-            TabPrefix = string.Empty;
+            _tabCount = 0;
+            _tabPrefix = string.Empty;
         }
         #endregion
 
@@ -101,16 +106,16 @@ namespace SQLine.UI
                 return;
             }
 
-            TabCount++;
+            _tabCount++;
 
-            if (TabCount <= matches.Count())
+            if (_tabCount <= matches.Count())
             {
-                outputItem = matches.ToList()[TabCount - 1];
+                outputItem = matches.ToList()[_tabCount - 1];
             }
-            else if (TabCount > matches.Count())
+            else if (_tabCount > matches.Count())
             {
-                TabCount -= matches.Count();
-                outputItem = matches.ToList()[TabCount - 1];
+                _tabCount -= matches.Count();
+                outputItem = matches.ToList()[_tabCount - 1];
             }
 
             ConsoleInterface.ClearCurrentLine();

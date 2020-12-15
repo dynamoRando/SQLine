@@ -35,8 +35,13 @@ namespace SQLine
                         HandleTabInput();
                         break;
                     case ConsoleKey.Enter:
+                        KeyUpBehavior.ResetKeyUpCount();
+                        KeyUpBehavior.AddCommandToHistory(ConsoleInterface.Builder.ToString());
                         HandleEnterKeyInput();
                         ConsoleInterface.Builder.Clear();
+                        break;
+                    case ConsoleKey.UpArrow:
+                        KeyUpBehavior.HandleKeyUp();
                         break;
                     default:
                         HandleKeyInput(input);
@@ -55,17 +60,7 @@ namespace SQLine
 
         private static void HandleEnterKeyInput()
         {
-            Console.WriteLine();
-            if (App.Mode == AppMode.PendingConnection && ConsoleInterface.Builder.ToString() != "?")
-            {
-                App.Connect(ConsoleInterface.Builder.ToString());
-            }
-            else
-            {
-                App.ParseCommand(ConsoleInterface.Builder.ToString());
-            }
-
-            ConsoleInterface.ShowPrefix();
+            EnterBehavior.HandleEnter();
         }
 
         private static void HandleKeyInput(ConsoleKeyInfo input)
