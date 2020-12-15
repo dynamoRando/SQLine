@@ -68,6 +68,7 @@ namespace SQLine
                     Console.WriteLine($"Connected to {AppCache.ServerName} - {AppCache.CurrentDatabase}, getting tables...");
                     using (SqlDataReader reader = comm.ExecuteReader())
                     {
+                        var schemaTable = reader.GetSchemaTable();
                         while (reader.Read())
                         {
                             var column = new ColumnInfo();
