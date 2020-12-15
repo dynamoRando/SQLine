@@ -30,18 +30,6 @@ namespace SQLine
         #endregion
 
         #region Public Methods
-        internal static void MainMenu()
-        {
-            Console.WriteLine($"Press Esc at any time to exit program");
-            Console.WriteLine($"Enter a server name to connect to or 'localhost' to connect to an instance locally");
-            Console.WriteLine($"Connection will use default to Trusted Connection");
-            Console.WriteLine($"Type '?' at any time to show a list of available commands");
-        }
-        #endregion
-
-        #region Private Methods
-        #endregion
-
         internal static void Connect(string serverName)
         {
             Console.WriteLine($"Connecting to {serverName}");
@@ -193,6 +181,17 @@ namespace SQLine
                 Console.WriteLine(formatter, values);
             }
         }
+        internal static void MainMenu()
+        {
+            Console.WriteLine($"Press Esc at any time to exit program");
+            Console.WriteLine($"Enter a server name to connect to or 'localhost' to connect to an instance locally");
+            Console.WriteLine($"Connection will use default to Trusted Connection");
+            Console.WriteLine($"Type '?' at any time to show a list of available commands");
+        }
+        #endregion
+
+        #region Private Methods
+        #endregion
 
     }
 }
