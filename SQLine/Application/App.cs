@@ -59,7 +59,7 @@ namespace SQLine
 
             if (table != null)
             {
-                var connString = $"Server={AppCache.ServerName};Database={AppCache.CurrentDatabase};Trusted_Connection = True;";
+                var connString = AppConnectionString.SQLServer.GetTrustedConnection(AppCache.ServerName, AppCache.CurrentDatabase);
                 using (var conn = new SqlConnection(connString))
                 using (var comm = new SqlCommand(AppSQLCommand.GetTablesSchema.Replace("<objectId>", table.ObjectId.ToString()), conn))
                 {
@@ -206,7 +206,7 @@ namespace SQLine
 
         internal static void GetTables()
         {
-            var connString = $"Server={AppCache.ServerName};Database={AppCache.CurrentDatabase};Trusted_Connection = True;";
+            var connString = AppConnectionString.SQLServer.GetTrustedConnection(AppCache.ServerName, AppCache.CurrentDatabase);
             using (var conn = new SqlConnection(connString))
             using (var comm = new SqlCommand(AppSQLCommand.GetTables, conn))
             {
@@ -229,9 +229,9 @@ namespace SQLine
 
         internal static void GetDatabases(string serverName)
         {
-            var connString = $"Server={serverName};Database=master;Trusted_Connection = True;";
+            var connString = AppConnectionString.SQLServer.GetTrustedConnection(AppCache.ServerName);
             using (var conn = new SqlConnection(connString))
-            using (var comm = new SqlCommand($"SELECT * FROM sys.databases", conn))
+            using (var comm = new SqlCommand(AppSQLCommand.GetSystemTableInfo, conn))
             {
                 conn.Open();
                 AppCache.Databases.Clear();
