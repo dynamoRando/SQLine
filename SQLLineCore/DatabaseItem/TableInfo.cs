@@ -5,9 +5,9 @@ using System.Numerics;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace SQLine
+namespace SQLineCore
 {
-    class TableInfo
+    public class TableInfo
     {
         public string SchemaName = string.Empty;
         public string TableName = string.Empty;

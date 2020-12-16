@@ -5,7 +5,7 @@ using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
 using System.Globalization;
-using SQLine.Application;
+using SQLineCore;
 
 /*
     * May you do good and not evil.
@@ -15,9 +15,9 @@ using SQLine.Application;
     * Obediently yours.
 */
 
-namespace SQLine
+namespace SQLineCore
 {
-    class App
+    public static class App
     {
         #region Private Fields
         #endregion
@@ -30,14 +30,14 @@ namespace SQLine
         #endregion
 
         #region Public Methods
-        internal static void Connect(string serverName)
+        public static void Connect(string serverName)
         {
             Console.WriteLine($"Connecting to {serverName}");
             AppCache.ServerName = serverName;
             GetDatabases(serverName);
         }
 
-        internal static void GetTableSchema(string tableName)
+        public static void GetTableSchema(string tableName)
         {
             if (AppCache.Tables.Count == 0)
             {
@@ -72,7 +72,7 @@ namespace SQLine
             }
         }
 
-        internal static void ParseCommand(string command)
+        public static void ParseCommand(string command)
         {
             if (command.StartsWith(AppCommands.QUESTION))
             {
@@ -83,15 +83,20 @@ namespace SQLine
             {
                 AppCommandUse.HandleUsingCommand(command, App.Mode);
             }
+
+            if (command.StartsWith(AppCommands.CONNECT_KEYWORD + " "))
+            {
+                AppCommandConnect.HandleConnect(command, App.Mode);
+            }
         }
 
-        internal static void SetDatabase(string databaseName)
+        public static void SetDatabase(string databaseName)
         {
             AppCache.CurrentDatabase = databaseName;
             App.Mode = AppMode.UsingDatabase;
         }
 
-        internal static void ListCachedDatabases()
+        public static void ListCachedDatabases()
         {
             Console.WriteLine($"Listing databases on server {AppCache.ServerName}");
             foreach (var dbName in AppCache.Databases)
@@ -100,7 +105,7 @@ namespace SQLine
             }
         }
 
-        internal static void ListTables(string prefix)
+        public static void ListTables(string prefix)
         {
             if (string.IsNullOrEmpty(prefix))
             {
@@ -121,7 +126,7 @@ namespace SQLine
             }
         }
 
-        internal static void GetTables()
+        public static void GetTables()
         {
             var connString = AppConnectionString.SQLServer.GetTrustedConnection(AppCache.ServerName, AppCache.CurrentDatabase);
             using (var conn = new SqlConnection(connString))
@@ -144,7 +149,7 @@ namespace SQLine
             }
         }
 
-        internal static void GetDatabases(string serverName)
+        public static void GetDatabases(string serverName)
         {
             var connString = AppConnectionString.SQLServer.GetTrustedConnection(AppCache.ServerName);
             using (var conn = new SqlConnection(connString))
@@ -167,7 +172,8 @@ namespace SQLine
 
             Mode = AppMode.ConnectedToServer;
         }
-        internal static void ShowTableSchema(string prefix)
+
+        public static void ShowTableSchema(string prefix)
         {
             var table = AppCache.Tables.FirstOrDefault(t => t.TableName == prefix);
             int maxColLength = table.Columns.Select(c => c.ColumnName.Length).ToList().Max();
@@ -181,7 +187,7 @@ namespace SQLine
                 Console.WriteLine(formatter, values);
             }
         }
-        internal static void MainMenu()
+        public static void MainMenu()
         {
             Console.WriteLine($"Press Esc at any time to exit program");
             Console.WriteLine($"Enter a server name to connect to or 'localhost' to connect to an instance locally");

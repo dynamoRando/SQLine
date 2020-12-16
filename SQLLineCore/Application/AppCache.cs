@@ -3,10 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using SQLineCore;
 
-namespace SQLine
+namespace SQLineCore
 {
-    static class AppCache
+    public static class AppCache
     {
         #region Private Fields
         #endregion

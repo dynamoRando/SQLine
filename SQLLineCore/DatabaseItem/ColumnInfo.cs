@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace SQLine
+namespace SQLineCore
 {
-    class ColumnInfo
+    public class ColumnInfo
     {
         public string ColumnName = string.Empty;
         public bool IsNullable = false;

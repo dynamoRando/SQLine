@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace SQLine
+namespace SQLineCore
 {
-    internal static class AppCommandUse
+    public static class AppCommandUse
     { 
         #region Private Fields
         #endregion

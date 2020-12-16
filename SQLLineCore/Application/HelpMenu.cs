@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace SQLine
+namespace SQLineCore
 {
-    static class HelpMenu
+    public static class HelpMenu
     {
         #region Private Fields
         #endregion

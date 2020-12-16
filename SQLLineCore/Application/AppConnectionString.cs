@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace SQLine
+namespace SQLineCore
 {
-    internal static class AppConnectionString
+    public static class AppConnectionString
     {
         internal static class SQLServer
         {

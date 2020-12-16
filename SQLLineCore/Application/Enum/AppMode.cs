@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace SQLine
+namespace SQLineCore
 {
-    internal enum AppMode
+    public enum AppMode
     {
         Unknown,
         PendingConnection,
