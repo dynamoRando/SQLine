@@ -22,7 +22,7 @@ namespace SQLineGUI.UI
         #region Public Methods
         internal static void Init()
         {
-            Window = new Window("Output")
+            Window = new Window("Output [Scroll Up To See History]")
             {
                 X = 0,
                 Y = 7,
@@ -79,6 +79,7 @@ namespace SQLineGUI.UI
                 }
             }
 
+            _output.MoveEnd();
             _output.SelectedItem = maxEntry;
         }
         #endregion
