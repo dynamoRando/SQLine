@@ -25,9 +25,8 @@ namespace SQLineGUI
         internal static void HandleEnter(string command)
         {
             var result = new List<string>();
-
-            KeyUpBehavior.ResetKeyUpCount();
             KeyUpBehavior.AddCommandToHistory(command);
+            KeyUpBehavior.ResetKeyUpCount();
             result = core.App.ParseCommand(command);
             HandleResult(result);
         }

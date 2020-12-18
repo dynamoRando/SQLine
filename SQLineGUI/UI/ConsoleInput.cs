@@ -54,17 +54,18 @@ namespace SQLineGUI.UI
 
             Window.Add(_input);
             Window.Add(_test);
-            Window.KeyPress += Window_KeyPress;
+
+            Debug.WriteLine("Registering KeyDown Event");
+            Window.KeyDown += Window_KeyDown;
         }
 
-        #endregion
-
-        #region Private Methods
-        private static void Window_KeyPress(View.KeyEventEventArgs obj)
+        private static void Window_KeyDown(View.KeyEventEventArgs obj)
         {
             _test.Text = obj.KeyEvent.Key.ToString();
             string input = _input.Text.ToString();
             Key key = obj.KeyEvent.Key;
+
+            Debug.WriteLine(DateTime.Now.ToString() + " ConsoleInput: " + key.ToString());
 
             switch (key)
             {
@@ -90,6 +91,10 @@ namespace SQLineGUI.UI
                     break;
             }
         }
+
+        #endregion
+
+        #region Private Methods
         #endregion
 
 
