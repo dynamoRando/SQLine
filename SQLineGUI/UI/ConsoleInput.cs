@@ -70,14 +70,16 @@ namespace SQLineGUI.UI
             switch (key)
             {
                 case Key.Enter:
-
                     if (input == string.Empty)
                     {
                         return;
                     }
+                    else
+                    {
+                        EnterBehavior.HandleEnter(input);
+                        _input.Text = string.Empty;
+                    }
 
-                    EnterBehavior.HandleEnter(input);
-                    _input.Text = string.Empty;
                     break;
                 case Key.Tab:
                     break;
