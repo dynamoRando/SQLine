@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Net;
 using System.Text;
@@ -57,18 +58,28 @@ namespace SQLineGUI.UI
         {
             _test.Text = obj.KeyEvent.Key.ToString();
             string input = _input.Text.ToString();
+            Key key = obj.KeyEvent.Key;
             var result = new List<string>();
 
-            if (input == string.Empty)
+            if (input == string.Empty && key != Key.CursorUp)
             {
                 return;
             }
 
-            switch (obj.KeyEvent.Key)
+            switch (key)
             {
                 case Key.Enter:
+                    KeyUpBehavior.ResetKeyUpCount();
+                    KeyUpBehavior.AddCommandToHistory(input);
                     result = core.App.ParseCommand(input);
                     _input.Text = string.Empty;
+                    HandleResult(result);
+                    break;
+                case Key.Tab:
+                    break;
+                case Key.CursorUp:
+                    string line = KeyUpBehavior.HandleKeyUp();
+                    result.Add(line);
                     HandleResult(result);
                     break;
                 default:
