@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Terminal.Gui;
+using core = SQLineCore;
 
 namespace SQLineGUI.UI
 {
@@ -18,6 +19,8 @@ namespace SQLineGUI.UI
         #region Public Methods
         public static void Init()
         {
+            core.App.Mode = core.AppMode.PendingConnection;
+
             Top = new Toplevel();
             Window = new Window()
             {

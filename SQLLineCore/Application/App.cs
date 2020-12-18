@@ -72,11 +72,13 @@ namespace SQLineCore
             }
         }
 
-        public static void ParseCommand(string command)
+        public static List<string> ParseCommand(string command)
         {
+            var result = new List<string>();
+
             if (command.StartsWith(AppCommands.QUESTION))
             {
-                AppCommandQuestions.HandleQuestion(command, App.Mode);
+                result = AppCommandQuestions.HandleQuestion(command, App.Mode);
             }
 
             if (command.StartsWith(AppCommands.USE_KEYWORD + " "))
@@ -88,6 +90,8 @@ namespace SQLineCore
             {
                 AppCommandConnect.HandleConnect(command, App.Mode);
             }
+
+            return result;
         }
 
         public static void SetDatabase(string databaseName)

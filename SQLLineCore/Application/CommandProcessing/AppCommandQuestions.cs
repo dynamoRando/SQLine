@@ -18,8 +18,10 @@ namespace SQLineCore
         #endregion
 
         #region Public Methods
-        internal static void HandleQuestion(string command, AppMode mode)
+        internal static List<string> HandleQuestion(string command, AppMode mode)
         {
+            var result = new List<string>();
+
             if (mode == AppMode.ConnectedToServer)
             {
                 HandleConnectedToServer(command);
@@ -27,13 +29,15 @@ namespace SQLineCore
 
             if (mode == AppMode.PendingConnection)
             {
-                HandlePendingConnection(command);
+                result = HandlePendingConnection(command);
             }
 
             if (mode == AppMode.UsingDatabase)
             {
                 HandleUsingDatabase(command);
             }
+
+            return result;
         }
         #endregion
 
@@ -93,12 +97,16 @@ namespace SQLineCore
             }
         }
 
-        internal static void HandlePendingConnection(string command)
+        internal static List<string> HandlePendingConnection(string command)
         {
+            var result = new List<string>();
+
             if (command == AppCommands.QUESTION)
             {
-                HelpMenu.PendingConnection();
+                result = HelpMenu.PendingConnection();
             }
+
+            return result;
         }
 
         internal static void HandleConnectedToServer(string command)

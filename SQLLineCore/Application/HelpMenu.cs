@@ -27,12 +27,15 @@ namespace SQLineCore
             Console.WriteLine($"Type '?' at any time to show a list of available commands");
         }
 
-        internal static void PendingConnection()
+        internal static List<string> PendingConnection()
         {
-            Console.WriteLine($"Press Esc at any time to exit program");
-            Console.WriteLine($"Enter a server name to connect to or 'localhost' to connect to an instance locally");
-            Console.WriteLine($"Connection will use default to Trusted Connection");
-            Console.WriteLine($"Type '?' at any time to show a list of available commands");
+            var list = new List<string>();
+            list.Add($"Press Esc at any time to exit program");
+            list.Add($"Enter a server name to connect to or 'localhost' to connect to an instance locally");
+            list.Add($"Connection will use default to Trusted Connection");
+            list.Add($"Type '?' at any time to show a list of available commands");
+
+            return list;
         }
 
         internal static void UsingDatabase()

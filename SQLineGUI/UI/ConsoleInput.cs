@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 using Terminal.Gui;
+using core = SQLineCore;
 
 namespace SQLineGUI.UI
 {
@@ -15,6 +17,7 @@ namespace SQLineGUI.UI
 
         #region Private Fields
         static Label _test;
+        static TextField _input;
         #endregion
 
         #region Public Methods
@@ -25,10 +28,10 @@ namespace SQLineGUI.UI
                 X = 0,
                 Y = 1,
                 Width = 100,
-                Height = 5 
+                Height = 5
             };
 
-            var textField = new TextField(string.Empty)
+            _input = new TextField(string.Empty)
             {
                 X = 1,
                 Y = 1,
@@ -37,12 +40,12 @@ namespace SQLineGUI.UI
 
             _test = new Label()
             {
-                X = Pos.Right(textField) + 1,
-                Y = Pos.Top(textField),
+                X = Pos.Right(_input) + 1,
+                Y = Pos.Top(_input),
                 Width = Dim.Fill(1)
             };
 
-            Window.Add(textField);
+            Window.Add(_input);
             Window.Add(_test);
             Window.KeyPress += Window_KeyPress;
         }
@@ -53,8 +56,33 @@ namespace SQLineGUI.UI
         private static void Window_KeyPress(View.KeyEventEventArgs obj)
         {
             _test.Text = obj.KeyEvent.Key.ToString();
-            ConsoleOutput.SetLabel(obj.KeyEvent.Key.ToString());
+            string input = _input.Text.ToString();
+            var result = new List<string>();
+
+            if (input == string.Empty)
+            {
+                return;
+            }
+
+            switch (obj.KeyEvent.Key)
+            {
+                case Key.Enter:
+                    result = core.App.ParseCommand(input);
+                    _input.Text = string.Empty;
+                    HandleResult(result);
+                    break;
+                default:
+                    break;
+            }
         }
         #endregion
+
+        private static void HandleResult(List<string> result)
+        {
+            if (result != null)
+            {
+                ConsoleOutput.SetLabel(result);
+            }
+        }
     }
 }
