@@ -9,31 +9,30 @@ namespace SQLineGUI.UI
 {
     static class ConsoleInput
     {
-
-        #region Public Fields
-        internal static Window _console;
+        #region Public Properties
+        internal static Window Window { get; set; }
         #endregion
 
         #region Private Fields
         static Label _test;
         #endregion
 
-
+        #region Public Methods
         static public void Init()
         {
-            _console = new Window("Console")
+            Window = new Window("Console")
             {
                 X = 0,
                 Y = 1,
-                Width = Dim.Fill(),
-                Height = Dim.Fill() - 1
+                Width = 100,
+                Height = 5 
             };
 
             var textField = new TextField(string.Empty)
             {
                 X = 1,
                 Y = 1,
-                Width = Dim.Percent(50),
+                Width = Dim.Percent(75),
             };
 
             _test = new Label()
@@ -43,14 +42,18 @@ namespace SQLineGUI.UI
                 Width = Dim.Fill(1)
             };
 
-            _console.Add(textField);
-            _console.Add(_test);
-            _console.KeyPress += _console_KeyPress;
+            Window.Add(textField);
+            Window.Add(_test);
+            Window.KeyPress += Window_KeyPress;
         }
 
-        private static void _console_KeyPress(View.KeyEventEventArgs obj)
+        #endregion
+
+        #region Private Methods
+        private static void Window_KeyPress(View.KeyEventEventArgs obj)
         {
             _test.Text = obj.KeyEvent.Key.ToString();
         }
+        #endregion
     }
 }
