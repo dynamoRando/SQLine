@@ -1,4 +1,5 @@
-﻿using System;
+﻿using SQLineGUI.UI.HandleKeyPress;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -22,9 +23,14 @@ namespace SQLineGUI.UI
         #endregion
 
         #region Public Methods
-        static public void Init()
+        static internal void SetInput(string input)
         {
-            Window = new Window("Console")
+            _input.Text = input;
+        }
+
+        static internal void Init()
+        {
+            Window = new Window("Console [Press Esc to quit application]")
             {
                 X = 0,
                 Y = 1,
@@ -59,28 +65,26 @@ namespace SQLineGUI.UI
             _test.Text = obj.KeyEvent.Key.ToString();
             string input = _input.Text.ToString();
             Key key = obj.KeyEvent.Key;
-            var result = new List<string>();
-
-            if (input == string.Empty && key != Key.CursorUp)
-            {
-                return;
-            }
 
             switch (key)
             {
                 case Key.Enter:
-                    KeyUpBehavior.ResetKeyUpCount();
-                    KeyUpBehavior.AddCommandToHistory(input);
-                    result = core.App.ParseCommand(input);
+
+                    if (input == string.Empty)
+                    {
+                        return;
+                    }
+
+                    EnterBehavior.HandleEnter(input);
                     _input.Text = string.Empty;
-                    HandleResult(result);
                     break;
                 case Key.Tab:
                     break;
                 case Key.CursorUp:
-                    string line = KeyUpBehavior.HandleKeyUp();
-                    result.Add(line);
-                    HandleResult(result);
+                    KeyUpBehavior.HandleKeyUp();
+                    break;
+                case Key.Esc:
+                    EscBehavior.HandleEsc();
                     break;
                 default:
                     break;
@@ -88,12 +92,6 @@ namespace SQLineGUI.UI
         }
         #endregion
 
-        private static void HandleResult(List<string> result)
-        {
-            if (result != null)
-            {
-                ConsoleOutput.SetLabel(result);
-            }
-        }
+
     }
 }

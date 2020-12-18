@@ -1,4 +1,5 @@
-﻿using System;
+﻿using SQLineGUI.UI;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -30,7 +31,7 @@ namespace SQLineGUI
             _enteredCommands.Clear();
         }
 
-        internal static string HandleKeyUp()
+        internal static void HandleKeyUp()
         {
             _keyUpCount++;
             _enteredCommands.Reverse();
@@ -46,10 +47,10 @@ namespace SQLineGUI
                 _keyUpCount -= _enteredCommands.Count();
                 line = _enteredCommands[_keyUpCount - 1];
             }
-            
+
             _enteredCommands.Reverse();
 
-            return line;
+            HandleResult(line);
         }
 
         internal static void AddCommandToHistory(string command)
@@ -59,6 +60,10 @@ namespace SQLineGUI
         #endregion
 
         #region Private Methods
+        private static void HandleResult(string result)
+        {
+            ConsoleInput.SetInput(result);
+        }
         #endregion
 
 

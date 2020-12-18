@@ -4,12 +4,15 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using SQLineCore;
+using SQLineGUI.UI;
+using core = SQLineCore;
 
 namespace SQLineGUI
 {
     static class EnterBehavior
     {
         #region Private Fields
+
         #endregion
 
         #region Public Properties
@@ -21,21 +24,23 @@ namespace SQLineGUI
         #region Public Methods
         internal static void HandleEnter(string command)
         {
-            //Console.WriteLine();
-            //if (App.Mode == AppMode.PendingConnection && ConsoleInterface.Builder.ToString() != "?")
-            //{
-            //    App.Connect(ConsoleInterface.Builder.ToString());
-            //}
-            //else
-            //{
-            //    App.ParseCommand(ConsoleInterface.Builder.ToString());
-            //}
+            var result = new List<string>();
 
-            //ConsoleInterface.ShowPrefix();
+            KeyUpBehavior.ResetKeyUpCount();
+            KeyUpBehavior.AddCommandToHistory(command);
+            result = core.App.ParseCommand(command);
+            HandleResult(result);
         }
         #endregion
 
         #region Private Methods
+        private static void HandleResult(List<string> result)
+        {
+            if (result != null)
+            {
+                ConsoleOutput.SetLabel(result);
+            }
+        }
         #endregion
 
     }
