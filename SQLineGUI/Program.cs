@@ -6,11 +6,9 @@ namespace SQLineGUI
 {
     class Program
     {
-        static Window win;
         static void Main(string[] args)
         {
             AppLine.Init();
-          
         }
     }
 }
