@@ -30,14 +30,6 @@ namespace SQLineGUI.UI
                 Height = Dim.Fill()
             };
 
-            //_label = new Label(string.Empty)
-            //{
-            //    X = 0,
-            //    Y = 0,
-            //    Width = Dim.Fill(),
-            //    Height = Dim.Fill(),
-            //};
-
             _output = new ListView(_outputList)
             {
                 X = 0,
@@ -70,7 +62,8 @@ namespace SQLineGUI.UI
                     DateTime date;
                     if (DateTime.TryParse(item, out date))
                     {
-                        int index = _outputList.IndexOf(line);
+                        int index = _outputList.LastIndexOf(line);
+
                         if (index > maxEntry)
                         {
                             maxEntry = index;
