@@ -41,6 +41,13 @@ namespace SQLineGUI.UI
             Window.Add(_output);
         }
 
+        internal static void SetLabel(string content)
+        {
+            var list = new List<string>();
+            list.Add(content);
+            SetLabel(list);
+        }
+
         internal static void SetLabel(List<string> contents)
         {
             _outputList.Add(DateTime.Now.ToString() + " >>"); ;

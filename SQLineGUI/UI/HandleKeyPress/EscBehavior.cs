@@ -11,6 +11,7 @@ namespace SQLineGUI.UI.HandleKeyPress
         #region Public Methods
         internal static void HandleEsc()
         {
+            ConsoleOutput.SetLabel("Exiting Application...");
             Environment.Exit(0);
         }
         #endregion
