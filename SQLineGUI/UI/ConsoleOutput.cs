@@ -14,7 +14,7 @@ namespace SQLineGUI.UI
         #endregion
 
         #region Private Fields
-        static Label _test;
+        static Label _label;
         #endregion
 
         #region Public Methods
@@ -28,19 +28,22 @@ namespace SQLineGUI.UI
                 Height = Dim.Fill()
             };
 
-            var textField = new TextField(string.Empty)
+            _label = new Label(string.Empty)
             {
-                X = 1,
-                Y = 1,
-                Width = Dim.Percent(50),
+                X = 0,
+                Y = 0,
+                Width = Dim.Fill(),
+                Height = Dim.Fill(),
             };
 
-            _test = new Label()
-            {
-                X = Pos.Right(textField) + 1,
-                Y = Pos.Top(textField),
-                Width = Dim.Fill(1)
-            };
+            _label.Text = "FOOBAR";
+
+            Window.Add(_label);
+        }
+
+        internal static void SetLabel(string contents)
+        {
+            _label.Text += contents;
         }
         #endregion
 

@@ -53,6 +53,7 @@ namespace SQLineGUI.UI
         private static void Window_KeyPress(View.KeyEventEventArgs obj)
         {
             _test.Text = obj.KeyEvent.Key.ToString();
+            ConsoleOutput.SetLabel(obj.KeyEvent.Key.ToString());
         }
         #endregion
     }
