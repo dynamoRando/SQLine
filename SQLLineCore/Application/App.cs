@@ -30,11 +30,14 @@ namespace SQLineCore
         #endregion
 
         #region Public Methods
-        public static void Connect(string serverName)
+        public static List<string> Connect(string serverName)
         {
-            Console.WriteLine($"Connecting to {serverName}");
+            var result = new List<string>();
+            result.Add($"Connecting to {serverName}");
             AppCache.ServerName = serverName;
-            GetDatabases(serverName);
+            result.AddRange(GetDatabases(serverName));
+
+            return result;
         }
 
         public static void GetTableSchema(string tableName)
@@ -88,7 +91,7 @@ namespace SQLineCore
 
             if (command.StartsWith(AppCommands.CONNECT_KEYWORD + " "))
             {
-                AppCommandConnect.HandleConnect(command, App.Mode);
+                result = AppCommandConnect.HandleConnect(command, App.Mode);
             }
 
             return result;
@@ -100,45 +103,54 @@ namespace SQLineCore
             App.Mode = AppMode.UsingDatabase;
         }
 
-        public static void ListCachedDatabases()
+        public static List<string> ListCachedDatabases()
         {
-            Console.WriteLine($"Listing databases on server {AppCache.ServerName}");
+            var result = new List<string>();
+            result.Add($"Listing databases on server {AppCache.ServerName}");
             foreach (var dbName in AppCache.Databases)
             {
-                Console.WriteLine($"- {dbName}");
+                result.Add($"- {dbName}");
             }
+
+            return result;
         }
 
-        public static void ListTables(string prefix)
+        public static List<string> ListTables(string prefix)
         {
+            var result = new List<string>();
+
             if (string.IsNullOrEmpty(prefix))
             {
-                Console.WriteLine($"Listing tables from database {AppCache.CurrentDatabase} on server {AppCache.ServerName}");
+                result.Add($"Listing tables from database {AppCache.CurrentDatabase} on server {AppCache.ServerName}");
                 foreach (var table in AppCache.Tables)
                 {
-                    Console.WriteLine($"- {table.SchemaName}.{table.TableName}");
+                    result.Add($"- {table.SchemaName}.{table.TableName}");
                 }
             }
             else
             {
-                Console.WriteLine($"Listing tables from database {AppCache.CurrentDatabase} on server {AppCache.ServerName} with prefix '{prefix}'");
+                result.Add($"Listing tables from database {AppCache.CurrentDatabase} on server {AppCache.ServerName} with prefix '{prefix}'");
                 var tables = AppCache.Tables.Where(t => t.TableName.StartsWith(prefix, true, CultureInfo.InvariantCulture)).ToList();
                 foreach (var table in tables)
                 {
-                    Console.WriteLine($"- {table.SchemaName}.{table.TableName}");
+                    result.Add($"- {table.SchemaName}.{table.TableName}");
                 }
             }
+
+            return result;
         }
 
-        public static void GetTables()
+        public static List<string> GetTables()
         {
+            var result = new List<string>();
+
             var connString = AppConnectionString.SQLServer.GetTrustedConnection(AppCache.ServerName, AppCache.CurrentDatabase);
             using (var conn = new SqlConnection(connString))
             using (var comm = new SqlCommand(AppSQLCommand.GetTables, conn))
             {
                 conn.Open();
                 AppCache.Tables.Clear();
-                Console.WriteLine($"Connected to {AppCache.ServerName} - {AppCache.CurrentDatabase}, getting tables...");
+                result.Add($"Connected to {AppCache.ServerName} - {AppCache.CurrentDatabase}, getting tables...");
                 using (SqlDataReader reader = comm.ExecuteReader())
                 {
                     while (reader.Read())
@@ -151,10 +163,13 @@ namespace SQLineCore
                     }
                 }
             }
+
+            return result;
         }
 
-        public static void GetDatabases(string serverName)
+        public static List<string> GetDatabases(string serverName)
         {
+            List<string> result = new List<string>();
             var connString = AppConnectionString.SQLServer.GetTrustedConnection(AppCache.ServerName);
             using (var conn = new SqlConnection(connString))
             using (var comm = new SqlCommand(AppSQLCommand.GetSystemTableInfo, conn))
@@ -172,24 +187,33 @@ namespace SQLineCore
                 }
             }
 
-            ListCachedDatabases();
+            result = ListCachedDatabases();
 
             Mode = AppMode.ConnectedToServer;
+
+            return result;
         }
 
-        public static void ShowTableSchema(string prefix)
+        public static List<string> ShowTableSchema(string prefix)
         {
+            var result = new List<string>();
+
             var table = AppCache.Tables.FirstOrDefault(t => t.TableName == prefix);
             int maxColLength = table.Columns.Select(c => c.ColumnName.Length).ToList().Max();
-            Console.WriteLine($"Showing schema for table {table.SchemaName}.{table.TableName} in database {AppCache.CurrentDatabase} on server {AppCache.ServerName}");
+            result.Add($"Showing schema for table {table.SchemaName}.{table.TableName} in database {AppCache.CurrentDatabase} on server {AppCache.ServerName}");
             string formatter = "{0,-" + maxColLength.ToString() + "} {1,-10} {2,10} {3,-5}";
             string[] headers = { "COLUMNNAME", "DATATYPE", "MAXLENGTH", "ISNULLABLE" };
+            result.Add(string.Format(formatter, headers));
+
             Console.WriteLine(formatter, headers);
             foreach (var column in table.Columns)
             {
                 string[] values = { column.ColumnName, column.DataType, column.MaxLength.ToString(), column.IsNullable.ToString() };
+                result.Add(string.Format(formatter, values));
                 Console.WriteLine(formatter, values);
             }
+
+            return result;
         }
         public static void MainMenu()
         {

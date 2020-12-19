@@ -4,9 +4,9 @@ using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using SQLineCore;
+using core = SQLineCore;
 
-namespace SQLine.UI
+namespace SQLineGUI
 {
     /// <summary>
     /// A class for handling the Tab keypress to auto complete various commands/values
@@ -35,28 +35,28 @@ namespace SQLine.UI
         /// <summary>
         /// Handles the tab key press
         /// </summary>
-        internal static void HandleTab()
+        internal static void HandleTab(string input)
         {
             // if this is the first time the user has pressed the tab key, save the current entered line from the user
             // otherwise we want to iterate to the next value in the tab list depending on what the pending command is
 
-            //if (_tabCount == 0)
-            //{
-            //    _tabPrefix = ConsoleInterface.Builder.ToString();
-            //}
+            if (_tabCount == 0)
+            {
+                _tabPrefix = input;
+            }
 
-            //if (App.Mode == AppMode.ConnectedToServer || App.Mode == AppMode.UsingDatabase)
-            //{
-            //    if (_tabPrefix.StartsWith(AppCommands.USE_KEYWORD))
-            //    {
-            //        HandleTabUseDatabase(_tabPrefix);
-            //    }
+            if (core.App.Mode == core.AppMode.ConnectedToServer || core.App.Mode == core.AppMode.UsingDatabase)
+            {
+                if (_tabPrefix.StartsWith(core.AppCommands.USE_KEYWORD))
+                {
+                    HandleTabUseDatabase(_tabPrefix);
+                }
 
-            //    if (_tabPrefix.StartsWith(AppCommands.QUESTION_TABLE_SCHEMA))
-            //    {
-            //        HandleTabTableSchema(_tabPrefix);
-            //    }
-            //}
+                if (_tabPrefix.StartsWith(core.AppCommands.QUESTION_TABLE_SCHEMA))
+                {
+                    HandleTabTableSchema(_tabPrefix);
+                }
+            }
         }
 
         internal static void IncrementTabCount()
@@ -78,8 +78,8 @@ namespace SQLine.UI
         /// <param name="currentInput">The first few letters of the database name</param>
         private static void HandleTabUseDatabase(string currentInput)
         {
-            currentInput = currentInput.Replace(AppCommands.USE_KEYWORD, string.Empty).Trim();
-            HandleTabAutoComplete(currentInput, AppCommands.USE_KEYWORD, AppCache.Databases);
+            currentInput = currentInput.Replace(core.AppCommands.USE_KEYWORD, string.Empty).Trim();
+            HandleTabAutoComplete(currentInput, core.AppCommands.USE_KEYWORD, core.AppCache.Databases);
         }
 
         /// <summary>
@@ -88,8 +88,8 @@ namespace SQLine.UI
         /// <param name="currentInput">The first few letters of the table name</param>
         private static void HandleTabTableSchema(string currentInput)
         {
-            currentInput = currentInput.Replace(AppCommands.QUESTION_TABLE_SCHEMA, string.Empty).Trim();
-            HandleTabAutoComplete(currentInput, AppCommands.QUESTION_TABLE_SCHEMA, AppCache.Tables.Select(t => t.TableName).ToList());
+            currentInput = currentInput.Replace(core.AppCommands.QUESTION_TABLE_SCHEMA, string.Empty).Trim();
+            HandleTabAutoComplete(currentInput, core.AppCommands.QUESTION_TABLE_SCHEMA, core.AppCache.Tables.Select(t => t.TableName).ToList());
         }
 
         /// <summary>
@@ -120,12 +120,9 @@ namespace SQLine.UI
                 outputItem = matches.ToList()[_tabCount - 1];
             }
 
-            //ConsoleInterface.ClearCurrentLine();
-            //ConsoleInterface.ShowPrefix();
-            //string line = commandPrefix + " " + outputItem;
-            //ConsoleInterface.Builder.Clear();
-            //ConsoleInterface.Builder.Append(line);
-            //Console.Write(ConsoleInterface.Builder.ToString());
+            
+            string line = commandPrefix + " " + outputItem;
+            ConsoleInput.SetInput(line);
         }
 
 

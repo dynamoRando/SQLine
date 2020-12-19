@@ -1,5 +1,4 @@
-﻿using SQLineGUI.UI.HandleKeyPress;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -9,7 +8,7 @@ using System.Threading.Tasks;
 using Terminal.Gui;
 using core = SQLineCore;
 
-namespace SQLineGUI.UI
+namespace SQLineGUI
 {
     static class ConsoleInput
     {
@@ -18,7 +17,7 @@ namespace SQLineGUI.UI
         #endregion
 
         #region Private Fields
-        static Label _test;
+        static Label _label;
         static TextField _input;
         #endregion
 
@@ -26,6 +25,11 @@ namespace SQLineGUI.UI
         static internal void SetInput(string input)
         {
             _input.Text = input;
+        }
+
+        internal static void SetLabel(string input)
+        {
+            _label.Text = input;
         }
 
         static internal void Init()
@@ -42,10 +46,10 @@ namespace SQLineGUI.UI
             {
                 X = 1,
                 Y = 1,
-                Width = Dim.Percent(75),
+                Width = Dim.Percent(40),
             };
 
-            _test = new Label()
+            _label = new Label()
             {
                 X = Pos.Right(_input) + 1,
                 Y = Pos.Top(_input),
@@ -53,7 +57,7 @@ namespace SQLineGUI.UI
             };
 
             Window.Add(_input);
-            Window.Add(_test);
+            Window.Add(_label);
 
             Debug.WriteLine("Registering KeyDown Event");
             Window.KeyDown += Window_KeyDown;
@@ -61,7 +65,6 @@ namespace SQLineGUI.UI
 
         private static void Window_KeyDown(View.KeyEventEventArgs obj)
         {
-            _test.Text = obj.KeyEvent.Key.ToString();
             string input = _input.Text.ToString();
             Key key = obj.KeyEvent.Key;
 
@@ -82,6 +85,7 @@ namespace SQLineGUI.UI
 
                     break;
                 case Key.Tab:
+                    TabBehavior.HandleTab(input);
                     break;
                 case Key.CursorUp:
                     KeyUpBehavior.HandleKeyUp();

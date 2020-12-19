@@ -18,13 +18,16 @@ namespace SQLineCore
         #endregion
 
         #region Public Methods
-        internal static void ConnectedToServer()
+        internal static List<string> ConnectedToServer()
         {
-            Console.WriteLine($"Press Esc at any time to exit program");
-            Console.WriteLine($"Enter 'use' followed by a database name to switch your session to a specific database. Use Tab for autocomplete.");
-            Console.WriteLine($"Type '? dbs' to list all databases on the server");
-            Console.WriteLine($"Type '? dbs update' to update cache first and list all databases on the server");
-            Console.WriteLine($"Type '?' at any time to show a list of available commands");
+            var list = new List<string>();
+            list.Add($"Press Esc at any time to exit program");
+            list.Add($"Enter 'use' followed by a database name to switch your session to a specific database. Use Tab for autocomplete.");
+            list.Add($"Type '? dbs' to list all databases on the server");
+            list.Add($"Type '? dbs update' to update cache first and list all databases on the server");
+            list.Add($"Type '?' at any time to show a list of available commands");
+
+            return list;
         }
 
         internal static List<string> PendingConnection()
@@ -38,21 +41,24 @@ namespace SQLineCore
             return list;
         }
 
-        internal static void UsingDatabase()
+        internal static List<string> UsingDatabase()
         {
-            Console.WriteLine($"Press Esc at any time to exit program");
-            Console.WriteLine($"Press 'cn <prefix> to connect to a different server. Use Tab for autocomplete (uses connection history/preferences). - not implemented");
-            Console.WriteLine($"Enter 'use' followed by a database name to switch your session to a specific database.  Use Tab for autocomplete.");
-            Console.WriteLine($"Type '? dbs' to list all databases on the server");
-            Console.WriteLine($"Type '? dbs update' to update cache first and list all databases on the server");
-            Console.WriteLine($"Type '? t/v/sp update' to to update cache of all tables/views/sprocs in the current database - not fully implemented");
-            Console.WriteLine($"Type '? t/v/sp <prefix>' to list all tables/views/sprocs in the current database, or those with specified prefix - not fully implemented");
-            Console.WriteLine($"Type '? t/v s <prefix>' to show schema details of the table/view - not fully implemented");
-            Console.WriteLine($"Type 'q <query text>' to execute a query against the current database - not implemented");
-            Console.WriteLine($"Type 'o table/csv to change the preferred output from table format to CSV format - not implemented");
-            Console.WriteLine($"Press Ctrl+Q to enter query mode - not implemented");
-            Console.WriteLine($"Press Ctrl+E to execute the currently cached query against the current database - not implemented");
-            Console.WriteLine($"Type '?' at any time to show a list of available commands");
+            var list = new List<string>();
+            list.Add($"Press Esc at any time to exit program");
+            list.Add($"Press 'cn <prefix> to connect to a different server. Use Tab for autocomplete (uses connection history/preferences). - not implemented");
+            list.Add($"Enter 'use' followed by a database name to switch your session to a specific database.  Use Tab for autocomplete.");
+            list.Add($"Type '? dbs' to list all databases on the server");
+            list.Add($"Type '? dbs update' to update cache first and list all databases on the server");
+            list.Add($"Type '? t/v/sp update' to to update cache of all tables/views/sprocs in the current database - not fully implemented");
+            list.Add($"Type '? t/v/sp <prefix>' to list all tables/views/sprocs in the current database, or those with specified prefix - not fully implemented");
+            list.Add($"Type '? t/v s <prefix>' to show schema details of the table/view - not fully implemented");
+            list.Add($"Type 'q <query text>' to execute a query against the current database - not implemented");
+            list.Add($"Type 'o table/csv to change the preferred output from table format to CSV format - not implemented");
+            list.Add($"Press Ctrl+Q to enter query mode - not implemented");
+            list.Add($"Press Ctrl+E to execute the currently cached query against the current database - not implemented");
+            list.Add($"Type '?' at any time to show a list of available commands");
+
+            return list;
         }
         #endregion
 

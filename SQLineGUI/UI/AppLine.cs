@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using Terminal.Gui;
 using core = SQLineCore;
 
-namespace SQLineGUI.UI
+namespace SQLineGUI
 {
     public static class AppLine
     {

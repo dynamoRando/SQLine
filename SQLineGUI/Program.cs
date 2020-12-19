@@ -1,6 +1,6 @@
-﻿using SQLineGUI.UI;
-using System;
+﻿using System;
 using Terminal.Gui;
+
 namespace SQLineGUI
 {
     class Program

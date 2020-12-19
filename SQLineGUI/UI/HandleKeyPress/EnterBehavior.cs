@@ -4,7 +4,6 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using SQLineCore;
-using SQLineGUI.UI;
 using core = SQLineCore;
 
 namespace SQLineGUI
@@ -27,6 +26,7 @@ namespace SQLineGUI
             var result = new List<string>();
             KeyUpBehavior.AddCommandToHistory(command);
             KeyUpBehavior.ResetKeyUpCount();
+            TabBehavior.ResetTabValues();
             result = core.App.ParseCommand(command);
             HandleResult(result);
         }
@@ -39,6 +39,23 @@ namespace SQLineGUI
             {
                 ConsoleOutput.SetLabel(result);
             }
+
+            if (core.App.Mode == AppMode.ConnectedToServer || core.App.Mode == AppMode.UsingDatabase)
+            {
+                var label = string.Empty;
+                if (!string.IsNullOrEmpty(core.AppCache.ServerName))
+                { 
+                    label = $"[Server]: {core.AppCache.ServerName}";
+                }
+
+                if(!string.IsNullOrEmpty(core.AppCache.CurrentDatabase))
+                {
+                    label += $" [Database]: {core.AppCache.CurrentDatabase}";
+                }
+
+                ConsoleInput.SetLabel(label);
+            }
+
         }
         #endregion
 
