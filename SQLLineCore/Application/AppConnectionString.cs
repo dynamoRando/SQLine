@@ -19,6 +19,11 @@ namespace SQLineCore
             {
                 return $"Server={serverName};Database={databaseName};Trusted_Connection = True;";
             }
+
+            public static string GetTrustedCurrentConnectionString()
+            {
+                return $"Server={AppCache.ServerName};Database={AppCache.CurrentDatabase};Trusted_Connection = True;";
+            }
         }
     }
 }

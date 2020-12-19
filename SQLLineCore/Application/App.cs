@@ -6,6 +6,7 @@ using System.Data.SqlClient;
 using System.Linq;
 using System.Globalization;
 using SQLineCore;
+using SQLineCore.Application.CommandProcessing;
 
 /*
     * May you do good and not evil.
@@ -92,6 +93,11 @@ namespace SQLineCore
             if (command.StartsWith(AppCommands.CONNECT_KEYWORD + " "))
             {
                 result = AppCommandConnect.HandleConnect(command, App.Mode);
+            }
+
+            if (command.StartsWith(AppCommands.QUERY_KEYWORD + " "))
+            {
+                result = AppCommandQuery.HandleQuery(command, App.Mode);
             }
 
             return result;
