@@ -38,6 +38,11 @@ namespace SQLineGUI
 
             string line = string.Empty;
 
+            if (_enteredCommands.Count() == 0)
+            {
+                return;
+            }
+
             if (_keyUpCount <= _enteredCommands.Count())
             {
                 line = _enteredCommands[_keyUpCount - 1];
