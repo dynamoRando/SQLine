@@ -31,6 +31,11 @@ namespace SQLineGUI
             {
                 UICommandShowHide.HandleHide(command);
             }
+
+            if (command.StartsWith(UICommands.SIZE_WINDOW + " "))
+            {
+                UICommandSizeWindow.HandleSizeWindow(command);
+            }
         }
         #endregion
 

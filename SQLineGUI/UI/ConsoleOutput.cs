@@ -48,6 +48,16 @@ namespace SQLineGUI
             SetLabel(list);
         }
 
+        internal static void SetWidth(int width)
+        {
+            Window.Width = width;
+        }
+
+        internal static void SetHeight(int height)
+        {
+            Window.Height = height;
+        }
+
         internal static void SetLabel(List<string> contents)
         {
             _outputList.Add(DateTime.Now.ToString() + " >>"); ;

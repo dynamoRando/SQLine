@@ -37,6 +37,16 @@ namespace SQLineGUI
         {
             Window.Visible = true;
         }
+
+        internal static void SetWidth(int width)
+        {
+            Window.Width = width;
+        }
+
+        internal static void SetHeight(int height)
+        {
+            Window.Height = height;
+        }
         #endregion
 
         #region Private Methods
