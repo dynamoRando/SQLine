@@ -17,6 +17,7 @@ namespace SQLineGUI
         static List<string> _outputList = new List<string>();
         static Label _label;
         static ListView _output;
+        static ScrollView _outputScroll;
         #endregion
 
         #region Public Methods
@@ -38,7 +39,25 @@ namespace SQLineGUI
                 Height = Dim.Fill(),
             };
 
-            Window.Add(_output);
+            //_outputScroll = new ScrollView(new Rect(2, 2, 50, 20))
+            _outputScroll = new ScrollView()
+            {
+                X = 0,
+                Y = 0,
+                Width = Dim.Fill(),
+                Height = Dim.Fill(),
+                ContentSize = new Size(200, 100),
+                ShowVerticalScrollIndicator = true,
+                ShowHorizontalScrollIndicator = true,
+            };
+
+            _outputScroll.Add(_output);
+
+            _outputScroll.KeepContentAlwaysInViewport = true;
+
+            Window.Add(_outputScroll);
+            
+            //Window.Add(_output);
         }
 
         internal static void SetLabel(string content)
@@ -77,6 +96,10 @@ namespace SQLineGUI
         #endregion
 
         #region Private Methods
+        private static void SetScrollViewContentSize(int width, int height)
+        {
+            _outputScroll.ContentSize = new Size(width, height);
+        }
         private static void SetCurrentSeletedPosition()
         {
             int maxEntry = 0;
