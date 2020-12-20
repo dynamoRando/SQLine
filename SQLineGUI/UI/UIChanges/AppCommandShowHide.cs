@@ -23,7 +23,6 @@ namespace SQLineCore.Application.CommandProcessing
             switch(windowName)
             {
                 case "console":
-                    ConsoleOut
                     break;
                 case "output":
                     break;
