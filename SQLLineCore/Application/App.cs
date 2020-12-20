@@ -100,16 +100,6 @@ namespace SQLineCore
                 result = AppCommandQuery.HandleQuery(command, App.Mode);
             }
 
-            if (command.StartsWith(AppCommands.SHOW + " "))
-            {
-                AppCommandShowHide.HandleShow(command);
-            }
-
-            if (command.StartsWith(AppCommands.HIDE + " "))
-            {
-                AppCommandShowHide.HandleHide(command);
-            }
-
             return result;
         }
 

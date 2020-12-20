@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using SQLineCore;
+using SQLineGUI.UI.UIChanges;
 using core = SQLineCore;
 
 namespace SQLineGUI
@@ -24,10 +25,19 @@ namespace SQLineGUI
         internal static void HandleEnter(string command)
         {
             var result = new List<string>();
+
             KeyUpBehavior.AddCommandToHistory(command);
             KeyUpBehavior.ResetKeyUpCount();
             TabBehavior.ResetTabValues();
-            result = core.App.ParseCommand(command);
+            if (IsUICommand(command))
+            {
+                UIBehavior.HandleUICommand(command);
+            }
+            else
+            {
+                result = core.App.ParseCommand(command);
+            }
+            
             HandleResult(result);
         }
         #endregion
@@ -44,11 +54,11 @@ namespace SQLineGUI
             {
                 var label = string.Empty;
                 if (!string.IsNullOrEmpty(core.AppCache.ServerName))
-                { 
+                {
                     label = $"[Server]: {core.AppCache.ServerName}";
                 }
 
-                if(!string.IsNullOrEmpty(core.AppCache.CurrentDatabase))
+                if (!string.IsNullOrEmpty(core.AppCache.CurrentDatabase))
                 {
                     label += $" [Database]: {core.AppCache.CurrentDatabase}";
                 }
@@ -56,6 +66,22 @@ namespace SQLineGUI
                 ConsoleInput.SetLabel(label);
             }
 
+        }
+
+        private static bool IsUICommand(string command)
+        {
+            bool isUICommand = false;
+
+            if (UICommands.GetCommands().Any(c => command.StartsWith(c)))
+            {
+                isUICommand = true;
+            }
+            else
+            {
+                isUICommand = false;
+            }
+
+            return isUICommand;
         }
         #endregion
 

@@ -18,7 +18,22 @@ namespace SQLineCore
         public static string QUESTION_DATABASES_UPDATE = "? dbs update";
         public static string CONNECT_KEYWORD = "cn";
         public static string QUERY_KEYWORD = "q";
-        public static string SHOW = "show";
-        public static string HIDE = "hide";
+       
+        public static List<string> GetCommands()
+        {
+            var result = new List<string>();
+
+            result.Add(USE_KEYWORD);
+            result.Add(QUESTION);
+            result.Add(QUESTION_TABLE);
+            result.Add(QUESTION_TABLES_UPDATE);
+            result.Add(QUESTION_TABLE_SCHEMA);
+            result.Add(QUESTION_DATABASES);
+            result.Add(QUESTION_DATABASES_UPDATE);
+            result.Add(CONNECT_KEYWORD);
+            result.Add(QUERY_KEYWORD);
+
+            return result;
+        }
     }
 }
