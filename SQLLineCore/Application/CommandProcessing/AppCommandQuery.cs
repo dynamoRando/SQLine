@@ -88,7 +88,7 @@ namespace SQLineCore.Application.CommandProcessing
         private static string BuildFormatter(List<ColumnInfo> columns)
         {
             StringBuilder result = new StringBuilder();
-            string prefix = string.Empty;
+            string prefix;
 
             //  string formatter = "{0,-" + maxColLength.ToString() + "} {1,-10} {2,10} {3,-5}";
             foreach (var column in columns)
