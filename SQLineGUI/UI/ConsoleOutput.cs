@@ -54,6 +54,16 @@ namespace SQLineGUI
             _outputList.AddRange(contents);
             SetCurrentSeletedPosition();
         }
+
+        internal static void Hide()
+        {
+            Window.Visible = false;
+        }
+
+        internal static void Show()
+        {
+            Window.Visible = true;
+        }
         #endregion
 
         #region Private Methods

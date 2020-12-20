@@ -16,7 +16,6 @@ namespace SQLineCore.Application.CommandProcessing
         #endregion
 
         #region Public Methods
-        // this should not be in the core since this is a UI change 
         internal static void HandleHide(string command)
         {
             var windowName = command.Replace(AppCommands.HIDE, string.Empty).Trim().ToLower();
@@ -24,6 +23,7 @@ namespace SQLineCore.Application.CommandProcessing
             switch(windowName)
             {
                 case "console":
+                    ConsoleOut
                     break;
                 case "output":
                     break;
