@@ -17,6 +17,9 @@ namespace SQLineCore
         public static string QUESTION_DATABASES = "? dbs";
         public static string QUESTION_DATABASES_UPDATE = "? dbs update";
         public static string CONNECT_KEYWORD = "cn";
+        public static string USER_NAME = "un";
+        public static string PASSWORD = "pw";
+        public static string SERVERNAME = "sn";    
         public static string QUERY_KEYWORD = "q";
        
         public static List<string> GetCommands()

@@ -41,6 +41,19 @@ namespace SQLineCore
             return result;
         }
 
+        public static List<string> Connect(string serverName, string userName, string password)
+        {
+            var result = new List<string>();
+
+            result.Add($"Connecting to {serverName}");
+            AppCache.ServerName = serverName;
+            AppCache.UserName = userName;
+            AppCache.Password = password;
+            result.AddRange(GetDatabases(serverName, userName, password));
+
+            return result;
+        }
+
         public static void GetTableSchema(string tableName)
         {
             if (AppCache.Tables.Count == 0)
@@ -52,7 +65,7 @@ namespace SQLineCore
 
             if (table != null)
             {
-                var connString = AppConnectionString.SQLServer.GetTrustedConnection(AppCache.ServerName, AppCache.CurrentDatabase);
+                var connString = AppConnectionString.SQLServer.GetCurrentConnectionString();
                 using (var conn = new SqlConnection(connString))
                 using (var comm = new SqlCommand(AppSQLCommand.GetTablesSchema.Replace("<objectId>", table.ObjectId.ToString()), conn))
                 {
@@ -150,7 +163,7 @@ namespace SQLineCore
         {
             var result = new List<string>();
 
-            var connString = AppConnectionString.SQLServer.GetTrustedConnection(AppCache.ServerName, AppCache.CurrentDatabase);
+            var connString = AppConnectionString.SQLServer.GetCurrentConnectionString();
             using (var conn = new SqlConnection(connString))
             using (var comm = new SqlCommand(AppSQLCommand.GetTables, conn))
             {
@@ -173,10 +186,37 @@ namespace SQLineCore
             return result;
         }
 
+        public static List<string> GetDatabases(string serverName, string userName, string password)
+        {
+            List<string> result = new List<string>();
+            var connString = AppConnectionString.SQLServer.GetUserNamePasswordConnection(serverName, userName, password);
+            using (var conn = new SqlConnection(connString))
+            using (var comm = new SqlCommand(AppSQLCommand.GetSystemTableInfo, conn))
+            {
+                conn.Open();
+                AppCache.Databases.Clear();
+                Console.WriteLine($"Connected to {serverName} - reading databases...");
+                using (SqlDataReader reader = comm.ExecuteReader())
+                {
+                    while (reader.Read())
+                    {
+                        string dbName = reader["name"].ToString();
+                        AppCache.Databases.Add(dbName);
+                    }
+                }
+            }
+
+            result = ListCachedDatabases();
+
+            Mode = AppMode.ConnectedToServer;
+
+            return result;
+        }
+
         public static List<string> GetDatabases(string serverName)
         {
             List<string> result = new List<string>();
-            var connString = AppConnectionString.SQLServer.GetTrustedConnection(AppCache.ServerName);
+            var connString = AppConnectionString.SQLServer.GetCurrentConnectionString();
             using (var conn = new SqlConnection(connString))
             using (var comm = new SqlCommand(AppSQLCommand.GetSystemTableInfo, conn))
             {

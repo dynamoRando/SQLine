@@ -27,7 +27,7 @@ namespace SQLineCore.Application.CommandProcessing
             {
                 string input = command.Substring(2);
 
-                var connString = AppConnectionString.SQLServer.GetTrustedCurrentConnectionString();
+                var connString = AppConnectionString.SQLServer.GetCurrentConnectionString();
 
                 var adapter = new SqlDataAdapter(input, connString);
                 var table = new DataTable();
