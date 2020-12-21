@@ -56,7 +56,7 @@ namespace SQLineGUI
             _outputScroll.KeepContentAlwaysInViewport = true;
 
             Window.Add(_outputScroll);
-            
+
             //Window.Add(_output);
         }
 
@@ -70,11 +70,13 @@ namespace SQLineGUI
         internal static void SetWidth(int width)
         {
             Window.Width = width;
+            SetListViewToFill();
         }
 
         internal static void SetHeight(int height)
         {
             Window.Height = height;
+            SetListViewToFill();
         }
 
         internal static void SetLabel(List<string> contents)
@@ -96,6 +98,12 @@ namespace SQLineGUI
         #endregion
 
         #region Private Methods
+        private static void SetListViewToFill()
+        {
+            _output.Width = Dim.Fill();
+            _output.Height = Dim.Fill();
+        }
+
         private static void SetScrollViewContentSize(int width, int height)
         {
             _outputScroll.ContentSize = new Size(width, height);

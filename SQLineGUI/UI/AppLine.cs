@@ -35,6 +35,8 @@ namespace SQLineGUI
             ConsoleOutput.Init();
             TextEditor.Init();
 
+            TextEditor.Hide();
+
             AddWindows();
             Top.Add(Window);
 
