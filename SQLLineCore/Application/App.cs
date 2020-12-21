@@ -113,6 +113,11 @@ namespace SQLineCore
                 result = AppCommandQuery.HandleQuery(command, App.Mode);
             }
 
+            if (command.StartsWith(AppCommands.QUIT) || command.StartsWith(AppCommands.EXIT))
+            {
+                AppCommandQuitExit.HandleQuitOrExit();
+            }
+
             return result;
         }
 
@@ -259,7 +264,7 @@ namespace SQLineCore
 
             return result;
         }
-        
+
         #endregion
 
         #region Private Methods

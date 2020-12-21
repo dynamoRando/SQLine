@@ -21,6 +21,8 @@ namespace SQLineCore
         public static string PASSWORD = "pw";
         public static string SERVERNAME = "sn";    
         public static string QUERY_KEYWORD = "q";
+        public static string QUIT = "quit";
+        public static string EXIT = "exit";
        
         public static List<string> GetCommands()
         {
