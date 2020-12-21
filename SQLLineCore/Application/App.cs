@@ -195,7 +195,7 @@ namespace SQLineCore
             {
                 conn.Open();
                 AppCache.Databases.Clear();
-                Console.WriteLine($"Connected to {serverName} - reading databases...");
+                result.Add($"Connected to {serverName} - reading databases...");
                 using (SqlDataReader reader = comm.ExecuteReader())
                 {
                     while (reader.Read())
@@ -222,7 +222,7 @@ namespace SQLineCore
             {
                 conn.Open();
                 AppCache.Databases.Clear();
-                Console.WriteLine($"Connected to {serverName} - reading databases...");
+                result.Add($"Connected to {serverName} - reading databases...");
                 using (SqlDataReader reader = comm.ExecuteReader())
                 {
                     while (reader.Read())
@@ -251,23 +251,15 @@ namespace SQLineCore
             string[] headers = { "COLUMNNAME", "DATATYPE", "MAXLENGTH", "ISNULLABLE" };
             result.Add(string.Format(formatter, headers));
 
-            Console.WriteLine(formatter, headers);
             foreach (var column in table.Columns)
             {
                 string[] values = { column.ColumnName, column.DataType, column.MaxLength.ToString(), column.IsNullable.ToString() };
                 result.Add(string.Format(formatter, values));
-                Console.WriteLine(formatter, values);
             }
 
             return result;
         }
-        public static void MainMenu()
-        {
-            Console.WriteLine($"Press Esc at any time to exit program");
-            Console.WriteLine($"Enter a server name to connect to or 'localhost' to connect to an instance locally");
-            Console.WriteLine($"Connection will use default to Trusted Connection");
-            Console.WriteLine($"Type '?' at any time to show a list of available commands");
-        }
+        
         #endregion
 
         #region Private Methods

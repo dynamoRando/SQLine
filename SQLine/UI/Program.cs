@@ -23,7 +23,6 @@ namespace SQLine
             Console.WriteLine("---");
             Console.WriteLine("Press Esc to exit");
             Console.WriteLine();
-            App.MainMenu();
             ConsoleInterface.ShowPrefix();
 
             var input = Console.ReadKey(intercept: true);
