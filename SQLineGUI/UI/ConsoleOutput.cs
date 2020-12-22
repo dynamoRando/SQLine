@@ -28,7 +28,7 @@ namespace SQLineGUI
         {
             _windowWidth = 250;
 
-            Window = new Window("Output [Scroll Up To See History]")
+            Window = new Window("Output")
             {
                 X = 0,
                 Y = 7,
