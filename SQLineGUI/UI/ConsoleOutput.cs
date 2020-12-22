@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Terminal.Gui;
 
 namespace SQLineGUI
@@ -144,31 +142,6 @@ namespace SQLineGUI
             return _outputList.Count();
         }
 
-        private static void SetCurrentSeletedPosition()
-        {
-            int maxEntry = 0;
-
-            foreach (var line in _outputList)
-            {
-                if (line.EndsWith(">>"))
-                {
-                    var item = line.Replace(" >>", string.Empty);
-                    DateTime date;
-                    if (DateTime.TryParse(item, out date))
-                    {
-                        int index = _outputList.LastIndexOf(line);
-
-                        if (index > maxEntry)
-                        {
-                            maxEntry = index;
-                        }
-                    }
-                }
-            }
-
-            _output.MoveEnd();
-            //_output.SelectedItem = maxEntry;
-        }
         #endregion
     }
 }
