@@ -19,22 +19,25 @@ namespace SQLineGUI
         static ScrollView _outputScroll;
         static int _scrollViewContentHeight = 0;
         static int _scrollViewContentWidth = 0;
+        static int _windowWidth = 0;
+        static int _windowHeight = 0;
         #endregion
 
         #region Public Methods
         internal static void Init()
         {
+            _windowWidth = 250;
+
             Window = new Window("Output [Scroll Up To See History]")
             {
                 X = 0,
                 Y = 7,
-                Width = 245,
+                Width = Dim.Fill(),
                 Height = Dim.Fill()
             };
 
-            //_outputScroll = new ScrollView(new Rect(2, 2, 50, 20))
-            _scrollViewContentWidth = 200;
-            _scrollViewContentHeight = 100;
+            _scrollViewContentWidth = 250;
+            _scrollViewContentHeight = 250;
 
             _outputScroll = new ScrollView()
             {
@@ -51,14 +54,17 @@ namespace SQLineGUI
             {
                 X = 0,
                 Y = 0,
-                Width = Dim.Fill() - 3,
-                Height = Dim.Fill() - 3,
+                Width = Dim.Fill(),
+                Height = Dim.Fill(),
             };
 
             _outputScroll.KeepContentAlwaysInViewport = true;
             _outputScroll.Add(_output);
 
             Window.Add(_outputScroll);
+
+            
+            //_outputScroll.ContentSize = new Size(_output.Frame.Width, _output.Frame.Height);
 
             //Window.Add(_output);
         }
@@ -68,21 +74,26 @@ namespace SQLineGUI
             var list = new List<string>();
             list.Add(content);
             SetLabel(list);
+            _output.SetNeedsDisplay();
+            _outputScroll.SetNeedsDisplay();
+            Window.SetNeedsDisplay();
         }
 
         internal static void SetWidth(int width)
         {
-            Window.Width = width;
+            _windowWidth = width;
+            Window.Width = _windowWidth;
             //SetListViewToFill();
-            _scrollViewContentWidth = width - 5;
+            _scrollViewContentWidth = _windowWidth;
             SetScrollViewContentSize(_scrollViewContentWidth, _scrollViewContentHeight);
         }
 
         internal static void SetHeight(int height)
         {
-            Window.Height = height;
+            _windowHeight = height;
+            Window.Height = _windowHeight;
             //SetListViewToFill();
-            _scrollViewContentHeight = height - 5;
+            _scrollViewContentHeight = _windowHeight;
             SetScrollViewContentSize(_scrollViewContentWidth, _scrollViewContentHeight);
         }
 
