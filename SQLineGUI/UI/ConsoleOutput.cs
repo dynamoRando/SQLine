@@ -39,6 +39,14 @@ namespace SQLineGUI
             _scrollViewContentWidth = 250;
             _scrollViewContentHeight = 250;
 
+            _output = new TextView()
+            {
+                X = 0,
+                Y = 0,
+                Width = Dim.Fill(),
+                Height = Dim.Fill(),
+            };
+
             _outputScroll = new ScrollView()
             {
                 X = 0,
@@ -50,23 +58,11 @@ namespace SQLineGUI
                 ShowHorizontalScrollIndicator = true,
             };
 
-            _output = new TextView()
-            {
-                X = 0,
-                Y = 0,
-                Width = Dim.Fill(),
-                Height = Dim.Fill(),
-            };
-
             _outputScroll.KeepContentAlwaysInViewport = true;
             _outputScroll.Add(_output);
 
             Window.Add(_outputScroll);
 
-            
-            //_outputScroll.ContentSize = new Size(_output.Frame.Width, _output.Frame.Height);
-
-            //Window.Add(_output);
         }
 
         internal static void SetLabel(string content)
@@ -74,16 +70,12 @@ namespace SQLineGUI
             var list = new List<string>();
             list.Add(content);
             SetLabel(list);
-            _output.SetNeedsDisplay();
-            _outputScroll.SetNeedsDisplay();
-            Window.SetNeedsDisplay();
         }
 
         internal static void SetWidth(int width)
         {
             _windowWidth = width;
             Window.Width = _windowWidth;
-            //SetListViewToFill();
             _scrollViewContentWidth = _windowWidth;
             SetScrollViewContentSize(_scrollViewContentWidth, _scrollViewContentHeight);
         }
@@ -92,17 +84,18 @@ namespace SQLineGUI
         {
             _windowHeight = height;
             Window.Height = _windowHeight;
-            //SetListViewToFill();
             _scrollViewContentHeight = _windowHeight;
             SetScrollViewContentSize(_scrollViewContentWidth, _scrollViewContentHeight);
         }
 
         internal static void SetLabel(List<string> contents)
         {
+            _outputList.Clear();
+
             _outputList.Add(DateTime.Now.ToString() + " >>"); ;
             _outputList.AddRange(contents);
-            //SetCurrentSeletedPosition();
             _output.Text = string.Join(Environment.NewLine, _outputList.ToArray());
+            HandleUIChanges();
         }
 
         internal static void Hide()
@@ -117,10 +110,40 @@ namespace SQLineGUI
         #endregion
 
         #region Private Methods
+        private static void HandleUIChanges()
+        {
+            SetScrollViewContentSize(GetMaxWidthInCollection(), GetTotalHeightInCollection());
+
+            _output.SetNeedsDisplay();
+            _outputScroll.SetNeedsDisplay();
+            Window.SetNeedsDisplay();
+        }
+
         private static void SetScrollViewContentSize(int width, int height)
         {
             _outputScroll.ContentSize = new Size(width, height);
         }
+
+        private static int GetMaxWidthInCollection()
+        {
+                int maxLength = 0;
+
+                foreach(var line in _outputList)
+                {
+                    if (line.Length > maxLength)
+                    {
+                        maxLength = line.Length;
+                    }
+                }
+
+                return maxLength;
+        }
+
+        private static int GetTotalHeightInCollection()
+        {
+            return _outputList.Count();
+        }
+
         private static void SetCurrentSeletedPosition()
         {
             int maxEntry = 0;
