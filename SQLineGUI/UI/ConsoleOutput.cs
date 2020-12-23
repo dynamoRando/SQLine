@@ -1,7 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
+using System.Data;
 using Terminal.Gui;
+using Terminal.Gui.Views;
 
 namespace SQLineGUI
 {
@@ -13,31 +14,22 @@ namespace SQLineGUI
 
         #region Private Fields
         static List<string> _outputList = new List<string>();
-        static TextView _output;
-        static ScrollView _outputScroll;
-        static int _scrollViewContentHeight = 0;
-        static int _scrollViewContentWidth = 0;
-        static int _windowWidth = 0;
-        static int _windowHeight = 0;
+        static ListView _output;
+        static TableView _table;
         #endregion
 
         #region Public Methods
         internal static void Init()
         {
-            _windowWidth = 250;
-
-            Window = new Window("Output")
+            Window = new Window("Output [Scroll Up To See History]")
             {
                 X = 0,
                 Y = 7,
-                Width = Dim.Fill(),
+                Width = 100,
                 Height = Dim.Fill()
             };
 
-            _scrollViewContentWidth = 250;
-            _scrollViewContentHeight = 250;
-
-            _output = new TextView()
+            _output = new ListView(_outputList)
             {
                 X = 0,
                 Y = 0,
@@ -45,22 +37,38 @@ namespace SQLineGUI
                 Height = Dim.Fill(),
             };
 
-            _outputScroll = new ScrollView()
+            _table = new TableView()
             {
                 X = 0,
                 Y = 0,
                 Width = Dim.Fill(),
                 Height = Dim.Fill(),
-                ContentSize = new Size(_scrollViewContentWidth, _scrollViewContentHeight),
-                ShowVerticalScrollIndicator = true,
-                ShowHorizontalScrollIndicator = true,
             };
 
-            _outputScroll.KeepContentAlwaysInViewport = true;
-            _outputScroll.Add(_output);
+            Window.Add(_output);
+            Window.Add(_table);
 
-            Window.Add(_outputScroll);
+            HideTable();
+        }
 
+        internal static void HideTable()
+        {
+            _table.Visible = false;
+        }
+
+        internal static void ShowTable()
+        {
+            _table.Visible = true;
+        }
+
+        internal static void HideOutput()
+        {
+            _output.Visible = false;
+        }
+
+        internal static void ShowOutput()
+        {
+            _output.Visible = true;
         }
 
         internal static void SetLabel(string content)
@@ -72,28 +80,31 @@ namespace SQLineGUI
 
         internal static void SetWidth(int width)
         {
-            _windowWidth = width;
-            Window.Width = _windowWidth;
-            _scrollViewContentWidth = _windowWidth;
-            SetScrollViewContentSize(_scrollViewContentWidth, _scrollViewContentHeight);
+            Window.Width = width;
+            SetListViewToFill();
         }
 
         internal static void SetHeight(int height)
         {
-            _windowHeight = height;
-            Window.Height = _windowHeight;
-            _scrollViewContentHeight = _windowHeight;
-            SetScrollViewContentSize(_scrollViewContentWidth, _scrollViewContentHeight);
+            Window.Height = height;
+            SetListViewToFill();
         }
 
         internal static void SetLabel(List<string> contents)
         {
-            _outputList.Clear();
-
             _outputList.Add(DateTime.Now.ToString() + " >>"); ;
             _outputList.AddRange(contents);
-            _output.Text = string.Join(Environment.NewLine, _outputList.ToArray());
-            HandleUIChanges();
+            HideTable();
+            ShowOutput();
+            SetCurrentSelectedPosition();
+        }
+
+        internal static void ShowTableData(DataTable data)
+        {
+            
+            _table.Table = data;
+            HideOutput();
+            ShowTable();
         }
 
         internal static void Hide()
@@ -108,40 +119,38 @@ namespace SQLineGUI
         #endregion
 
         #region Private Methods
-        private static void HandleUIChanges()
+        private static void SetListViewToFill()
         {
-            SetScrollViewContentSize(GetMaxWidthInCollection(), GetTotalHeightInCollection());
-
-            _output.SetNeedsDisplay();
-            _outputScroll.SetNeedsDisplay();
-            Window.SetNeedsDisplay();
+            _output.Width = Dim.Fill();
+            _output.Height = Dim.Fill();
         }
 
-        private static void SetScrollViewContentSize(int width, int height)
-        {
-            _outputScroll.ContentSize = new Size(width, height);
-        }
 
-        private static int GetMaxWidthInCollection()
+        private static void SetCurrentSelectedPosition()
         {
-                int maxLength = 0;
+            int maxEntry = 0;
 
-                foreach(var line in _outputList)
+            foreach (var line in _outputList)
+            {
+                if (line.EndsWith(">>"))
                 {
-                    if (line.Length > maxLength)
+                    var item = line.Replace(" >>", string.Empty);
+                    DateTime date;
+                    if (DateTime.TryParse(item, out date))
                     {
-                        maxLength = line.Length;
+                        int index = _outputList.LastIndexOf(line);
+
+                        if (index > maxEntry)
+                        {
+                            maxEntry = index;
+                        }
                     }
                 }
+            }
 
-                return maxLength;
+            _output.MoveEnd();
+            _output.SelectedItem = maxEntry;
         }
-
-        private static int GetTotalHeightInCollection()
-        {
-            return _outputList.Count();
-        }
-
         #endregion
     }
 }

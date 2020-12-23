@@ -89,6 +89,18 @@ namespace SQLineCore
             }
         }
 
+        public static DataTable ParseQuery(string command)
+        {
+            DataTable result = new DataTable();
+
+            if (command.StartsWith(AppCommands.QUERY_KEYWORD + " "))
+            {
+                result = AppCommandQuery.GetQueryResult(command, App.Mode);
+            }
+
+            return result;
+        }
+
         public static List<string> ParseCommand(string command)
         {
             var result = new List<string>();

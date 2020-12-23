@@ -19,6 +19,25 @@ namespace SQLineCore.Application.CommandProcessing
         #endregion
 
         #region Public Methods
+        internal static DataTable GetQueryResult(string command, AppMode mode)
+        {
+            DataTable result = new DataTable();
+
+            if (mode == AppMode.UsingDatabase)
+            {
+                string input = command.Substring(2);
+
+                var connString = AppConnectionString.SQLServer.GetCurrentConnectionString();
+
+                var adapter = new SqlDataAdapter(input, connString);
+                var table = new DataTable();
+                adapter.Fill(table);
+                result = table;
+            }
+
+            return result;
+        }
+
         internal static List<string> HandleQuery(string command, AppMode mode)
         {
             var result = new List<string>();

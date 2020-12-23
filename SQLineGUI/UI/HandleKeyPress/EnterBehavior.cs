@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -29,20 +30,38 @@ namespace SQLineGUI
             KeyUpBehavior.AddCommandToHistory(command);
             KeyUpBehavior.ResetKeyUpCount();
             TabBehavior.ResetTabValues();
+
             if (IsUICommand(command))
             {
                 UIBehavior.HandleUICommand(command);
             }
             else
             {
-                result = core.App.ParseCommand(command);
+                if (AppCommandResult.IsText(command))
+                {
+                    result = core.App.ParseCommand(command);
+                    HandleResult(result);
+                }
+                else
+                {
+                    DataTable item;
+                    item = core.App.ParseQuery(command);
+                    HandleResult(item);
+                }
             }
-            
-            HandleResult(result);
         }
         #endregion
 
         #region Private Methods
+        private static void HandleResult(DataTable table)
+        {
+            if (table != null)
+            {
+                ConsoleOutput.ShowTableData(table);
+            }
+        }
+
+
         private static void HandleResult(List<string> result)
         {
             if (result != null)
