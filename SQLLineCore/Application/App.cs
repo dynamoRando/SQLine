@@ -61,7 +61,7 @@ namespace SQLineCore
                 GetTables();
             }
 
-            var table = AppCache.Tables.FirstOrDefault(t => t.TableName == tableName);
+            var table = AppCache.Tables.FirstOrDefault(t => string.Equals(t.TableName,tableName, StringComparison.CurrentCultureIgnoreCase));
 
             if (table != null)
             {
@@ -71,7 +71,6 @@ namespace SQLineCore
                 {
                     conn.Open();
                     table.Columns.Clear();
-                    Console.WriteLine($"Connected to {AppCache.ServerName} - {AppCache.CurrentDatabase}, getting tables...");
                     using (SqlDataReader reader = comm.ExecuteReader())
                     {
                         var schemaTable = reader.GetSchemaTable();
@@ -261,17 +260,20 @@ namespace SQLineCore
         {
             var result = new List<string>();
 
-            var table = AppCache.Tables.FirstOrDefault(t => t.TableName == prefix);
-            int maxColLength = table.Columns.Select(c => c.ColumnName.Length).ToList().Max();
-            result.Add($"Showing schema for table {table.SchemaName}.{table.TableName} in database {AppCache.CurrentDatabase} on server {AppCache.ServerName}");
-            string formatter = "{0,-" + maxColLength.ToString() + "} {1,-10} {2,10} {3,-5}";
-            string[] headers = { "COLUMNNAME", "DATATYPE", "MAXLENGTH", "ISNULLABLE" };
-            result.Add(string.Format(formatter, headers));
-
-            foreach (var column in table.Columns)
+            var table = AppCache.Tables.FirstOrDefault(t => string.Equals(t.TableName,prefix, StringComparison.CurrentCultureIgnoreCase));
+            if (table != null)
             {
-                string[] values = { column.ColumnName, column.DataType, column.MaxLength.ToString(), column.IsNullable.ToString() };
-                result.Add(string.Format(formatter, values));
+                int maxColLength = table.Columns.Select(c => c.ColumnName.Length).ToList().Max();
+                result.Add($"Showing schema for table {table.SchemaName}.{table.TableName} in database {AppCache.CurrentDatabase} on server {AppCache.ServerName}");
+                string formatter = "{0,-" + maxColLength.ToString() + "} {1,-10} {2,10} {3,-5}";
+                string[] headers = { "COLUMNNAME", "DATATYPE", "MAXLENGTH", "ISNULLABLE" };
+                result.Add(string.Format(formatter, headers));
+
+                foreach (var column in table.Columns)
+                {
+                    string[] values = { column.ColumnName, column.DataType, column.MaxLength.ToString(), column.IsNullable.ToString() };
+                    result.Add(string.Format(formatter, values));
+                }
             }
 
             return result;
