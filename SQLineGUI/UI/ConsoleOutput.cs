@@ -16,6 +16,7 @@ namespace SQLineGUI
         static List<string> _outputList = new List<string>();
         static ListView _output;
         static TableView _table;
+        static TableStyle _tableStyle;
         #endregion
 
         #region Public Methods
@@ -44,6 +45,11 @@ namespace SQLineGUI
                 Width = Dim.Fill(),
                 Height = Dim.Fill(),
             };
+
+            _tableStyle = new TableStyle();
+            _tableStyle.AlwaysShowHeaders = true;
+
+            _table.Style = _tableStyle;
 
             Window.Add(_output);
             Window.Add(_table);
