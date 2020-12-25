@@ -37,6 +37,8 @@ namespace SQLineCore
             result.Add(QUESTION_DATABASES_UPDATE);
             result.Add(CONNECT_KEYWORD);
             result.Add(QUERY_KEYWORD);
+            result.Add(QUIT);
+            result.Add(EXIT);
 
             return result;
         }

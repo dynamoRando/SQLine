@@ -91,7 +91,7 @@ namespace SQLineGUI
         {
             bool isUICommand = false;
 
-            if (UICommands.GetCommands().Any(c => command.StartsWith(c)))
+            if (UICommands.GetCommands().Any(c => command.StartsWith(c, StringComparison.CurrentCultureIgnoreCase)))
             {
                 isUICommand = true;
             }

@@ -124,7 +124,7 @@ namespace SQLineCore
                 result = AppCommandQuery.HandleQuery(command, App.Mode);
             }
 
-            if (command.StartsWith(AppCommands.QUIT) || command.StartsWith(AppCommands.EXIT))
+            if (command.StartsWith(AppCommands.QUIT, true, CultureInfo.CurrentCulture) || command.StartsWith(AppCommands.EXIT, true, CultureInfo.CurrentCulture))
             {
                 AppCommandQuitExit.HandleQuitOrExit();
             }

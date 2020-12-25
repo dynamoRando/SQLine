@@ -13,7 +13,7 @@ namespace SQLineCore
             var commands = AppCommands.GetCommands();
             commands.Remove(AppCommands.QUERY_KEYWORD);
 
-            if (commands.Any(c => command.StartsWith(c)))
+            if (commands.Any(c => command.StartsWith(c, StringComparison.CurrentCultureIgnoreCase)))
             {
                 result = true;
             }
