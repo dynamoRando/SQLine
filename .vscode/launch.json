@@ -11,7 +11,7 @@
             "preLaunchTask": "build",
             "program": "${workspaceFolder}/SQLineGUI/bin/Debug/net5.0/SQLineGUI.dll",
             "args": [],
-            "cwd": "${workspaceFolder}/SQLine",
+            "cwd": "${workspaceFolder}/SQLineGUI",
             "console": "integratedTerminal",
             "stopAtEntry": false
         },

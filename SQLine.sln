@@ -3,7 +3,6 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.30803.129
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SQLine", "SQLine\SQLine.csproj", "{824AF2BE-3986-47B3-87BF-4A344C612AAB}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SQLineCore", "SQLLineCore\SQLineCore.csproj", "{64FD335D-530C-43C8-8018-4E247687F39E}"
 EndProject

@@ -131,7 +131,6 @@ namespace SQLineGUI
             _output.Height = Dim.Fill();
         }
 
-
         private static void SetCurrentSelectedPosition()
         {
             int maxEntry = 0;
@@ -157,6 +156,7 @@ namespace SQLineGUI
             _output.MoveEnd();
             _output.SelectedItem = maxEntry;
         }
+        
         #endregion
     }
 }
