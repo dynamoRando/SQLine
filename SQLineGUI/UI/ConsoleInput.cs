@@ -33,6 +33,11 @@ namespace SQLineGUI
             _label.Text = input;
         }
 
+        internal static void SetStatusLabel(string input)
+        {
+            _statusUpdate.Text = input;
+        }
+
         static internal void Init()
         {
             Window = new Window("Console [Press Esc to quit application]")
