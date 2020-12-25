@@ -25,7 +25,7 @@ namespace SQLineGUI
             Window = new Window("Output [Scroll Up To See History]")
             {
                 X = 0,
-                Y = 7,
+                Y = 9,
                 Width = 100,
                 Height = Dim.Fill()
             };

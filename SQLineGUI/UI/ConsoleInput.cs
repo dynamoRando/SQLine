@@ -19,6 +19,7 @@ namespace SQLineGUI
         #region Private Fields
         static Label _label;
         static TextField _input;
+        static Label _statusUpdate;
         #endregion
 
         #region Public Methods
@@ -39,7 +40,7 @@ namespace SQLineGUI
                 X = 0,
                 Y = 1,
                 Width = 100,
-                Height = 5
+                Height = 7
             };
 
             _input = new TextField(string.Empty)
@@ -56,8 +57,18 @@ namespace SQLineGUI
                 Width = Dim.Fill(1)
             };
 
+            _statusUpdate = new Label()
+            {
+                X = 1,
+                Y = Pos.Bottom(_input) + 1,
+                Width = Dim.Percent(40)
+            };
+
             Window.Add(_input);
             Window.Add(_label);
+            Window.Add(_statusUpdate);
+
+            _statusUpdate.Text = "[STATUS_HERE]";
 
             Debug.WriteLine("Registering KeyDown Event");
             Window.KeyDown += Window_KeyDown;
