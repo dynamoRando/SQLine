@@ -59,7 +59,6 @@ namespace SQLineGUI
             }
         }
 
-
         private static void HandleResult(List<string> result)
         {
             if (result != null)
