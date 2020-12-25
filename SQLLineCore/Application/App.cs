@@ -61,7 +61,7 @@ namespace SQLineCore
                 GetTables();
             }
 
-            var table = AppCache.Tables.FirstOrDefault(t => string.Equals(t.TableName,tableName, StringComparison.CurrentCultureIgnoreCase));
+            var table = AppCache.Tables.FirstOrDefault(t => string.Equals(t.TableName, tableName, StringComparison.CurrentCultureIgnoreCase));
 
             if (table != null)
             {
@@ -104,27 +104,27 @@ namespace SQLineCore
         {
             var result = new List<string>();
 
-            if (command.StartsWith(AppCommands.QUESTION))
+            if (command.StartsWith(AppCommands.QUESTION, StringComparison.CurrentCultureIgnoreCase))
             {
                 result = AppCommandQuestions.HandleQuestion(command, App.Mode);
             }
 
-            if (command.StartsWith(AppCommands.USE_KEYWORD + " "))
+            if (command.StartsWith(AppCommands.USE_KEYWORD + " ", StringComparison.CurrentCultureIgnoreCase))
             {
                 AppCommandUse.HandleUsingCommand(command, App.Mode);
             }
 
-            if (command.StartsWith(AppCommands.CONNECT_KEYWORD + " "))
+            if (command.StartsWith(AppCommands.CONNECT_KEYWORD + " ", StringComparison.CurrentCultureIgnoreCase))
             {
                 result = AppCommandConnect.HandleConnect(command, App.Mode);
             }
 
-            if (command.StartsWith(AppCommands.QUERY_KEYWORD + " "))
+            if (command.StartsWith(AppCommands.QUERY_KEYWORD + " ", StringComparison.CurrentCultureIgnoreCase))
             {
                 result = AppCommandQuery.HandleQuery(command, App.Mode);
             }
 
-            if (command.StartsWith(AppCommands.QUIT, true, CultureInfo.CurrentCulture) || command.StartsWith(AppCommands.EXIT, true, CultureInfo.CurrentCulture))
+            if (command.StartsWith(AppCommands.QUIT, StringComparison.CurrentCultureIgnoreCase) || command.StartsWith(AppCommands.EXIT, StringComparison.CurrentCultureIgnoreCase))
             {
                 AppCommandQuitExit.HandleQuitOrExit();
             }
@@ -260,7 +260,7 @@ namespace SQLineCore
         {
             var result = new List<string>();
 
-            var table = AppCache.Tables.FirstOrDefault(t => string.Equals(t.TableName,prefix, StringComparison.CurrentCultureIgnoreCase));
+            var table = AppCache.Tables.FirstOrDefault(t => string.Equals(t.TableName, prefix, StringComparison.CurrentCultureIgnoreCase));
             if (table != null)
             {
                 int maxColLength = table.Columns.Select(c => c.ColumnName.Length).ToList().Max();
