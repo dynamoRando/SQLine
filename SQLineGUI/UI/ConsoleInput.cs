@@ -73,8 +73,6 @@ namespace SQLineGUI
             Window.Add(_label);
             Window.Add(_statusUpdate);
 
-            _statusUpdate.Text = "[STATUS_HERE]";
-
             Debug.WriteLine("Registering KeyDown Event");
             Window.KeyDown += Window_KeyDown;
 
@@ -122,17 +120,41 @@ namespace SQLineGUI
         private static void ListenForCoreEvents()
         {
             core.App.GettingDatabases += HandleGettingDatabase;
+            core.App.GotDatabases += App_GotDatabases;
             core.App.ConnectingToServer += HandleConnecting;
+            core.App.ConnectedToServer += App_ConnectedToServer;
+            core.App.ExecutingQuery += App_ExecutingQuery;
+            core.App.ExecutedQuery += App_ExecutedQuery;
+        }
+
+        private static void App_ExecutedQuery(object sender, EventArgs e)
+        {
+            _statusUpdate.Text = "Executed Query.";
+        }
+
+        private static void App_ExecutingQuery(object sender, EventArgs e)
+        {
+            _statusUpdate.Text = "Executing Query...";
+        }
+
+        private static void App_GotDatabases(object sender, EventArgs e)
+        {
+            _statusUpdate.Text = "Got databases.";
+        }
+
+        private static void App_ConnectedToServer(object sender, EventArgs e)
+        {
+            _statusUpdate.Text = "Connected to server.";
         }
 
         private static void HandleConnecting(object sender, EventArgs e)
         {
-            _statusUpdate.Text = "Connecting";
+            _statusUpdate.Text = "Connecting...";
         }
 
         private static void HandleGettingDatabase(object sender, EventArgs e)
         {
-            _statusUpdate.Text = "Getting database";
+            _statusUpdate.Text = "Getting databases...";
         }
         #endregion
 
