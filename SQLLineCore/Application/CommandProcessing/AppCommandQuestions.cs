@@ -72,25 +72,25 @@ namespace SQLineCore
                 if (command == AppCommands.QUESTION_TABLES_UPDATE)
                 {
                     App.GetTables();
-                    result = App.ListTables(string.Empty);
+                    result = App.ListTables(string.Empty, string.Empty);
                 }
 
                 if (command.StartsWith(AppCommands.QUESTION_TABLE_SCHEMA))
                 {
                     string prefix = command.Replace(AppCommands.QUESTION_TABLE_SCHEMA, string.Empty).Trim();
-                    App.GetTableSchema(prefix);
+                    App.GetTableSchema(prefix, string.Empty);
                     result = App.ShowTableSchema(prefix);
                 }
                 // show all tables
                 else if (command == AppCommands.QUESTION_TABLE)
                 {
-                    result = App.ListTables(string.Empty);
+                    result = App.ListTables(string.Empty, string.Empty);
                 }
                 else
                 {
                     // show all tables with the specified prefix
                     string prefix = command.Replace(AppCommands.QUESTION_TABLE, string.Empty).Trim();
-                    result = App.ListTables(prefix);
+                    result = App.ListTables(prefix, string.Empty);
                 }
             }
 

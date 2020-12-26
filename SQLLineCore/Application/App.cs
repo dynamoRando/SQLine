@@ -7,6 +7,7 @@ using System.Linq;
 using System.Globalization;
 using SQLineCore;
 using SQLineCore.Application.CommandProcessing;
+using System.Resources;
 
 /*
     * May you do good and not evil.
@@ -68,7 +69,7 @@ namespace SQLineCore
             return result;
         }
 
-        public static void GetTableSchema(string tableName)
+        public static void GetTableSchema(string tableName, string schema)
         {
             if (AppCache.Tables.Count == 0)
             {
@@ -79,11 +80,14 @@ namespace SQLineCore
 
             if (table != null)
             {
+                var gettingSchema = GettingTableSchema;
+                gettingSchema?.Invoke(null, null);
+
                 var connString = AppConnectionString.SQLServer.GetCurrentConnectionString();
                 using (var conn = new SqlConnection(connString))
                 using (var comm = new SqlCommand(AppSQLCommand.GetTablesSchema.Replace("<objectId>", table.ObjectId.ToString()), conn))
                 {
-                    conn.Open();
+                    OpenConnection(conn);
                     table.Columns.Clear();
                     using (SqlDataReader reader = comm.ExecuteReader())
                     {
@@ -99,6 +103,9 @@ namespace SQLineCore
                         }
                     }
                 }
+
+                var gotSchema = GotTableSchema;
+                gotSchema?.Invoke(null, null);
             }
         }
 
@@ -168,11 +175,38 @@ namespace SQLineCore
             return result;
         }
 
-        public static List<string> ListTables(string prefix)
+        /// <summary>
+        /// List the tables in the database 
+        /// </summary>
+        /// <param name="prefix">Filter results by a prefix ("StartsWith"). Pass string.Empty for all values</param>
+        /// <param name="schema">Filter results for tables in a specified schema. Pass string.Empty for all values</param>
+        /// <returns>A list of tables in the database filtered by the parameters.</returns>
+        public static List<string> ListTables(string prefix, string schema)
         {
             var result = new List<string>();
 
-            if (string.IsNullOrEmpty(prefix))
+            if (!string.IsNullOrEmpty(schema) && string.IsNullOrEmpty(prefix))
+            {
+                result.Add($"Listing tables from database {AppCache.CurrentDatabase} on server {AppCache.ServerName} for schema {schema}");
+                var tables = AppCache.Tables.Where(t => t.SchemaName.Equals(schema, StringComparison.CurrentCultureIgnoreCase)).ToList();
+                foreach (var table in tables)
+                {
+                    result.Add($"- {table.SchemaName}.{table.TableName}");
+                }
+            }
+            else if (!string.IsNullOrEmpty(schema) && !string.IsNullOrEmpty(prefix))
+            {
+                result.Add($"Listing tables from database {AppCache.CurrentDatabase} on server {AppCache.ServerName} for schema {schema} with prefix '{prefix}'");
+                var tables = AppCache.Tables.
+                    Where(t => t.SchemaName.Equals(schema, StringComparison.CurrentCultureIgnoreCase))
+                    .Where(x => x.TableName.StartsWith(prefix, StringComparison.CurrentCultureIgnoreCase)).ToList();
+                foreach (var table in tables)
+                {
+                    result.Add($"- {table.SchemaName}.{table.TableName}");
+                }
+            }
+            // show every table
+            else if (string.IsNullOrEmpty(prefix) && string.IsNullOrEmpty(schema))
             {
                 result.Add($"Listing tables from database {AppCache.CurrentDatabase} on server {AppCache.ServerName}");
                 foreach (var table in AppCache.Tables)
@@ -180,10 +214,11 @@ namespace SQLineCore
                     result.Add($"- {table.SchemaName}.{table.TableName}");
                 }
             }
-            else
+            // show filtered tables in every schema
+            else if (!string.IsNullOrEmpty(prefix) && string.IsNullOrEmpty(schema))
             {
                 result.Add($"Listing tables from database {AppCache.CurrentDatabase} on server {AppCache.ServerName} with prefix '{prefix}'");
-                var tables = AppCache.Tables.Where(t => t.TableName.StartsWith(prefix, true, CultureInfo.InvariantCulture)).ToList();
+                var tables = AppCache.Tables.Where(t => t.TableName.StartsWith(prefix, StringComparison.CurrentCultureIgnoreCase)).ToList();
                 foreach (var table in tables)
                 {
                     result.Add($"- {table.SchemaName}.{table.TableName}");
@@ -195,13 +230,16 @@ namespace SQLineCore
 
         public static List<string> GetTables()
         {
+            var gettingTables = GettingTables;
+            gettingTables?.Invoke(null, null);
+
             var result = new List<string>();
 
             var connString = AppConnectionString.SQLServer.GetCurrentConnectionString();
             using (var conn = new SqlConnection(connString))
             using (var comm = new SqlCommand(AppSQLCommand.GetTables, conn))
             {
-                conn.Open();
+                OpenConnection(conn);
                 AppCache.Tables.Clear();
                 result.Add($"Connected to {AppCache.ServerName} - {AppCache.CurrentDatabase}, getting tables...");
                 using (SqlDataReader reader = comm.ExecuteReader())
@@ -216,6 +254,9 @@ namespace SQLineCore
                     }
                 }
             }
+
+            var gotTables = GotTables;
+            gotTables?.Invoke(null, null);
 
             return result;
         }
