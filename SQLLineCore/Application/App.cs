@@ -191,7 +191,7 @@ namespace SQLineCore
                 var tables = AppCache.Tables.Where(t => t.SchemaName.Equals(schema, StringComparison.CurrentCultureIgnoreCase)).ToList();
                 foreach (var table in tables)
                 {
-                    result.Add($"- {table.SchemaName}.{table.TableName}");
+                    result.Add($"- {table.FullName}");
                 }
             }
             else if (!string.IsNullOrEmpty(schema) && !string.IsNullOrEmpty(prefix))
@@ -202,7 +202,7 @@ namespace SQLineCore
                     .Where(x => x.TableName.StartsWith(prefix, StringComparison.CurrentCultureIgnoreCase)).ToList();
                 foreach (var table in tables)
                 {
-                    result.Add($"- {table.SchemaName}.{table.TableName}");
+                    result.Add($"- {table.FullName}");
                 }
 
                 result.Add($"Listing tables from database {AppCache.CurrentDatabase} on server {AppCache.ServerName} for schema {schema} that contain '{prefix}'");
@@ -211,7 +211,7 @@ namespace SQLineCore
                     .Where(x => x.TableName.Contains(prefix, StringComparison.CurrentCultureIgnoreCase)).ToList();
                 foreach (var table in tables2)
                 {
-                    result.Add($"- {table.SchemaName}.{table.TableName}");
+                    result.Add($"- {table.FullName}");
                 }
             }
             // show every table
@@ -220,7 +220,7 @@ namespace SQLineCore
                 result.Add($"Listing tables from database {AppCache.CurrentDatabase} on server {AppCache.ServerName}");
                 foreach (var table in AppCache.Tables)
                 {
-                    result.Add($"- {table.SchemaName}.{table.TableName}");
+                    result.Add($"- {table.FullName}");
                 }
             }
             // show filtered tables in every schema
@@ -230,14 +230,14 @@ namespace SQLineCore
                 var tables = AppCache.Tables.Where(t => t.TableName.StartsWith(prefix, StringComparison.CurrentCultureIgnoreCase)).ToList();
                 foreach (var table in tables)
                 {
-                    result.Add($"- {table.SchemaName}.{table.TableName}");
+                    result.Add($"- {table.FullName}");
                 }
 
                 result.Add($"Listing tables from database {AppCache.CurrentDatabase} on server {AppCache.ServerName} that contain '{prefix}'");
                 var tables2 = AppCache.Tables.Where(t => t.TableName.Contains(prefix, StringComparison.CurrentCultureIgnoreCase)).ToList();
                 foreach (var table in tables2)
                 {
-                    result.Add($"- {table.SchemaName}.{table.TableName}");
+                    result.Add($"- {table.FullName}");
                 }
             }
 
