@@ -178,7 +178,7 @@ namespace SQLineCore
         /// <summary>
         /// List the tables in the database 
         /// </summary>
-        /// <param name="prefix">Filter results by a prefix ("StartsWith"). Pass string.Empty for all values</param>
+        /// <param name="prefix">Filter results by a prefix ("StartsWith and Contains"). Pass string.Empty for all values</param>
         /// <param name="schema">Filter results for tables in a specified schema. Pass string.Empty for all values</param>
         /// <returns>A list of tables in the database filtered by the parameters.</returns>
         public static List<string> ListTables(string prefix, string schema)
@@ -204,6 +204,15 @@ namespace SQLineCore
                 {
                     result.Add($"- {table.SchemaName}.{table.TableName}");
                 }
+
+                result.Add($"Listing tables from database {AppCache.CurrentDatabase} on server {AppCache.ServerName} for schema {schema} that contain '{prefix}'");
+                var tables2 = AppCache.Tables.
+                    Where(t => t.SchemaName.Equals(schema, StringComparison.CurrentCultureIgnoreCase))
+                    .Where(x => x.TableName.Contains(prefix, StringComparison.CurrentCultureIgnoreCase)).ToList();
+                foreach (var table in tables2)
+                {
+                    result.Add($"- {table.SchemaName}.{table.TableName}");
+                }
             }
             // show every table
             else if (string.IsNullOrEmpty(prefix) && string.IsNullOrEmpty(schema))
@@ -220,6 +229,13 @@ namespace SQLineCore
                 result.Add($"Listing tables from database {AppCache.CurrentDatabase} on server {AppCache.ServerName} with prefix '{prefix}'");
                 var tables = AppCache.Tables.Where(t => t.TableName.StartsWith(prefix, StringComparison.CurrentCultureIgnoreCase)).ToList();
                 foreach (var table in tables)
+                {
+                    result.Add($"- {table.SchemaName}.{table.TableName}");
+                }
+
+                result.Add($"Listing tables from database {AppCache.CurrentDatabase} on server {AppCache.ServerName} that contain '{prefix}'");
+                var tables2 = AppCache.Tables.Where(t => t.TableName.Contains(prefix, StringComparison.CurrentCultureIgnoreCase)).ToList();
+                foreach (var table in tables2)
                 {
                     result.Add($"- {table.SchemaName}.{table.TableName}");
                 }
