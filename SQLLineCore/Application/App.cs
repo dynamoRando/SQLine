@@ -248,7 +248,7 @@ namespace SQLineCore
                 conn.Open();
 
                 connecting = ConnectingToServer;
-                connecting?.BeginInvoke(null, null, null, null);
+                connecting?.Invoke(null, null);
 
                 AppCache.Databases.Clear();
                 result.Add($"Connected to {serverName} - reading databases...");
@@ -256,10 +256,8 @@ namespace SQLineCore
                 {
                     while (reader.Read())
                     {
-
-                        connecting.EndInvoke(null);
                         getDatabases = GettingDatabases;
-                        getDatabases?.BeginInvoke(null, null, null, null);
+                        getDatabases?.Invoke(null, null);
 
                         string dbName = reader["name"].ToString();
                         AppCache.Databases.Add(dbName);
@@ -268,8 +266,7 @@ namespace SQLineCore
             }
 
             result = ListCachedDatabases();
-            getDatabases.EndInvoke(null);
-
+            
             Mode = AppMode.ConnectedToServer;
 
             return result;
