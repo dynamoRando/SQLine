@@ -32,8 +32,15 @@ namespace SQLineCore
 
         #region Events
         public static event EventHandler ConnectingToServer;
+        public static event EventHandler ConnectedToServer;
         public static event EventHandler GettingDatabases;
+        public static event EventHandler GotDatabases;
         public static event EventHandler GettingTableSchema;
+        public static event EventHandler GotTableSchema;
+        public static event EventHandler GettingTables;
+        public static event EventHandler GotTables;
+        public static event EventHandler ExecutingQuery;
+        public static event EventHandler ExecutedQuery;
         #endregion
 
         #region Public Methods
@@ -42,7 +49,8 @@ namespace SQLineCore
             var result = new List<string>();
             result.Add($"Connecting to {serverName}");
             AppCache.ServerName = serverName;
-            result.AddRange(GetDatabases(serverName));
+            var items = GetDatabases(serverName);
+            result.AddRange(items);
 
             return result;
         }
@@ -100,7 +108,11 @@ namespace SQLineCore
 
             if (command.StartsWith(AppCommands.QUERY_KEYWORD + " "))
             {
+                var executingQuery = ExecutingQuery;
+                executingQuery?.Invoke(null, null);
                 result = AppCommandQuery.GetQueryResult(command, App.Mode);
+                var executedQuery = ExecutedQuery;
+                executedQuery?.Invoke(null, null);
             }
 
             return result;
@@ -210,16 +222,26 @@ namespace SQLineCore
 
         public static List<string> GetDatabases(string serverName, string userName, string password)
         {
+            EventHandler connecting = null;
+            EventHandler connected = null;
+            EventHandler gettingDatabases = null;
+            EventHandler gotDatabases = null;
+
             List<string> result = new List<string>();
             var connString = AppConnectionString.SQLServer.GetUserNamePasswordConnection(serverName, userName, password);
             using (var conn = new SqlConnection(connString))
             using (var comm = new SqlCommand(AppSQLCommand.GetSystemTableInfo, conn))
             {
-                conn.Open();
+                OpenConnection(conn);
+
                 AppCache.Databases.Clear();
                 result.Add($"Connected to {serverName} - reading databases...");
+
                 using (SqlDataReader reader = comm.ExecuteReader())
                 {
+                    gettingDatabases = GettingDatabases;
+                    gettingDatabases.Invoke(null, null);
+
                     while (reader.Read())
                     {
                         string dbName = reader["name"].ToString();
@@ -227,6 +249,9 @@ namespace SQLineCore
                     }
                 }
             }
+
+            gotDatabases = GotDatabases;
+            gotDatabases?.Invoke(null, null);
 
             result = ListCachedDatabases();
 
@@ -237,18 +262,15 @@ namespace SQLineCore
 
         public static List<string> GetDatabases(string serverName)
         {
-            EventHandler connecting = null;
             EventHandler getDatabases = null;
+            EventHandler gotDatabases = null;
 
             List<string> result = new List<string>();
             var connString = AppConnectionString.SQLServer.GetCurrentConnectionString();
             using (var conn = new SqlConnection(connString))
             using (var comm = new SqlCommand(AppSQLCommand.GetSystemTableInfo, conn))
             {
-                conn.Open();
-
-                connecting = ConnectingToServer;
-                connecting?.Invoke(null, null);
+                OpenConnection(conn);
 
                 AppCache.Databases.Clear();
                 result.Add($"Connected to {serverName} - reading databases...");
@@ -266,7 +288,10 @@ namespace SQLineCore
             }
 
             result = ListCachedDatabases();
-            
+
+            gotDatabases = GotDatabases;
+            gotDatabases?.Invoke(null, null);
+
             Mode = AppMode.ConnectedToServer;
 
             return result;
@@ -298,6 +323,14 @@ namespace SQLineCore
         #endregion
 
         #region Private Methods
+        private static void OpenConnection(SqlConnection connection)
+        {
+            var connecting = ConnectingToServer;
+            connecting?.Invoke(null, null);
+            connection.Open();
+            var connected = ConnectedToServer;
+            connected?.Invoke(null, null);
+        }
         #endregion
 
     }

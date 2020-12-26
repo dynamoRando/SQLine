@@ -29,23 +29,32 @@ namespace SQLineGUI
             KeyUpBehavior.ResetKeyUpCount();
             TabBehavior.ResetTabValues();
 
-            if (IsUICommand(command))
+            try
             {
-                UIBehavior.HandleUICommand(command);
-            }
-            else
-            {
-                if (AppCommandResult.IsText(command))
+                if (IsUICommand(command))
                 {
-                    result = core.App.ParseCommand(command);
-                    HandleResult(result);
+                    UIBehavior.HandleUICommand(command);
                 }
                 else
                 {
-                    DataTable item;
-                    item = core.App.ParseQuery(command);
-                    HandleResult(item);
+                    if (AppCommandResult.IsText(command))
+                    {
+                        result = core.App.ParseCommand(command);
+                        HandleResult(result);
+                    }
+                    else
+                    {
+                        DataTable item;
+                        item = core.App.ParseQuery(command);
+                        HandleResult(item);
+                    }
                 }
+
+                ConsoleInput.SetStatusLabel(string.Empty);
+            }
+            catch (Exception e)
+            {
+                HandleError(e);
             }
         }
         #endregion
@@ -82,6 +91,11 @@ namespace SQLineGUI
                 ConsoleInput.SetLabel(label);
             }
 
+        }
+
+        private static void HandleError(Exception e)
+        {
+            ConsoleInput.SetStatusLabel($"Error: {e.Message}");
         }
 
         private static bool IsUICommand(string command)

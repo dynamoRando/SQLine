@@ -66,7 +66,7 @@ namespace SQLineGUI
             {
                 X = 1,
                 Y = Pos.Bottom(_input) + 1,
-                Width = Dim.Percent(40)
+                Width = Dim.Percent(90)
             };
 
             Window.Add(_input);
