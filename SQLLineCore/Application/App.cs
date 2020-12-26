@@ -30,6 +30,12 @@ namespace SQLineCore
         #region Constructors
         #endregion
 
+        #region Events
+        public static event EventHandler ConnectingToServer;
+        public static event EventHandler GettingDatabases;
+        public static event EventHandler GettingTableSchema;
+        #endregion
+
         #region Public Methods
         public static List<string> Connect(string serverName)
         {
@@ -231,18 +237,30 @@ namespace SQLineCore
 
         public static List<string> GetDatabases(string serverName)
         {
+            EventHandler connecting = null;
+            EventHandler getDatabases = null;
+
             List<string> result = new List<string>();
             var connString = AppConnectionString.SQLServer.GetCurrentConnectionString();
             using (var conn = new SqlConnection(connString))
             using (var comm = new SqlCommand(AppSQLCommand.GetSystemTableInfo, conn))
             {
                 conn.Open();
+
+                connecting = ConnectingToServer;
+                connecting?.BeginInvoke(null, null, null, null);
+
                 AppCache.Databases.Clear();
                 result.Add($"Connected to {serverName} - reading databases...");
                 using (SqlDataReader reader = comm.ExecuteReader())
                 {
                     while (reader.Read())
                     {
+
+                        connecting.EndInvoke(null);
+                        getDatabases = GettingDatabases;
+                        getDatabases?.BeginInvoke(null, null, null, null);
+
                         string dbName = reader["name"].ToString();
                         AppCache.Databases.Add(dbName);
                     }
@@ -250,6 +268,7 @@ namespace SQLineCore
             }
 
             result = ListCachedDatabases();
+            getDatabases.EndInvoke(null);
 
             Mode = AppMode.ConnectedToServer;
 

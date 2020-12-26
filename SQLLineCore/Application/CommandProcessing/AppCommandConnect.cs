@@ -16,6 +16,9 @@ namespace SQLineCore
         #region Constructors
         #endregion
 
+        #region Events
+        #endregion
+
         #region Public Methods
         internal static List<string> HandleConnect(string command, AppMode mode)
         {

@@ -77,6 +77,8 @@ namespace SQLineGUI
 
             Debug.WriteLine("Registering KeyDown Event");
             Window.KeyDown += Window_KeyDown;
+
+            ListenForCoreEvents();
         }
 
         private static void Window_KeyDown(View.KeyEventEventArgs obj)
@@ -117,6 +119,21 @@ namespace SQLineGUI
         #endregion
 
         #region Private Methods
+        private static void ListenForCoreEvents()
+        {
+            core.App.GettingDatabases += HandleGettingDatabase;
+            core.App.ConnectingToServer += HandleConnecting;
+        }
+
+        private static void HandleConnecting(object sender, EventArgs e)
+        {
+            _statusUpdate.Text = "Connecting";
+        }
+
+        private static void HandleGettingDatabase(object sender, EventArgs e)
+        {
+            _statusUpdate.Text = "Getting database";
+        }
         #endregion
 
 
