@@ -5,7 +5,7 @@ VisualStudioVersion = 16.0.30803.129
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SQLineCore", "SQLLineCore\SQLineCore.csproj", "{64FD335D-530C-43C8-8018-4E247687F39E}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SQLine", "SQLineGUI\SQLine.csproj", "{D9C70F53-F439-4BE4-B097-93D882110572}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SQLine", "SQLine\SQLine.csproj", "{D9C70F53-F439-4BE4-B097-93D882110572}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
