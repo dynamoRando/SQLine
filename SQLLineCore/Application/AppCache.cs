@@ -18,6 +18,7 @@ namespace SQLineCore
         public static string UserName { get; set; }
         public static string Password { get; set; }
         public static List<string> Databases { get; set; } = new List<string>();
+        public static AppSettings Settings { get; set; }
 
         public static List<TableInfo> Tables { get; set; } = new List<TableInfo>();
         #endregion

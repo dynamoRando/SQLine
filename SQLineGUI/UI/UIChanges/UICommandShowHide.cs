@@ -1,10 +1,10 @@
 ﻿using SQLineCore;
-using SQLineGUI.UI.UIChanges;
+using SQLine.UI.UIChanges;
 using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace SQLineGUI
+namespace SQLine
 {
     internal static class UICommandShowHide
     { 

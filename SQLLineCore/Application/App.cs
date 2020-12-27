@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
+using System.Text.Json;
 using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
@@ -8,6 +8,7 @@ using System.Globalization;
 using SQLineCore;
 using SQLineCore.Application.CommandProcessing;
 using System.Resources;
+using System.IO;
 
 /*
     * May you do good and not evil.
@@ -375,6 +376,29 @@ namespace SQLineCore
             }
 
             return result;
+        }
+
+        public static void LoadAppSettings(string filePath)
+        {
+            AppCache.Settings = GetAppSettings(filePath);
+        }
+
+        public static void SaveAppSettings(string filePath)
+        {
+            var lines = JsonSerializer.Serialize(AppCache.Settings);
+            File.WriteAllText(filePath, lines);
+        }
+
+        public static AppSettings GetAppSettings(string filePath)
+        {
+            var settings = new AppSettings();
+            if (File.Exists(filePath))
+            {
+                var lines = File.ReadAllText(filePath);
+                settings = JsonSerializer.Deserialize<AppSettings>(lines);
+            }
+
+            return settings;
         }
 
         #endregion

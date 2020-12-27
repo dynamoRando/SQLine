@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 using Terminal.Gui;
 using core = SQLineCore;
 
-namespace SQLineGUI
+namespace SQLine
 {
     static class ConsoleInput
     {

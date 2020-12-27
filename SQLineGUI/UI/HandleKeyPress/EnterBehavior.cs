@@ -3,10 +3,10 @@ using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 using SQLineCore;
-using SQLineGUI.UI.UIChanges;
+using SQLine.UI.UIChanges;
 using core = SQLineCore;
 
-namespace SQLineGUI
+namespace SQLine
 {
     static class EnterBehavior
     {

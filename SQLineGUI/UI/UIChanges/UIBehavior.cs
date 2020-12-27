@@ -1,12 +1,12 @@
 ﻿using SQLineCore;
-using SQLineGUI.UI.UIChanges;
+using SQLine.UI.UIChanges;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace SQLineGUI
+namespace SQLine
 {
     static class UIBehavior
     { 

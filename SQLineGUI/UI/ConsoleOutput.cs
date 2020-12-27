@@ -4,7 +4,7 @@ using System.Data;
 using Terminal.Gui;
 using Terminal.Gui.Views;
 
-namespace SQLineGUI
+namespace SQLine
 {
     static class ConsoleOutput
     {

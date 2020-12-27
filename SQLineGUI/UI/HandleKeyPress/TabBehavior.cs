@@ -6,7 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using core = SQLineCore;
 
-namespace SQLineGUI
+namespace SQLine
 {
     /// <summary>
     /// A class for handling the Tab keypress to auto complete various commands/values
@@ -47,15 +47,20 @@ namespace SQLineGUI
 
             if (core.App.Mode == core.AppMode.ConnectedToServer || core.App.Mode == core.AppMode.UsingDatabase)
             {
-                if (_tabPrefix.StartsWith(core.AppCommands.USE_KEYWORD))
+                if (_tabPrefix.StartsWith(core.AppCommands.USE_KEYWORD, StringComparison.CurrentCultureIgnoreCase))
                 {
                     HandleTabUseDatabase(_tabPrefix);
                 }
 
-                if (_tabPrefix.StartsWith(core.AppCommands.QUESTION_TABLE_SCHEMA))
+                if (_tabPrefix.StartsWith(core.AppCommands.QUESTION_TABLE_SCHEMA, StringComparison.CurrentCultureIgnoreCase))
                 {
                     HandleTabTableSchema(_tabPrefix);
                 }
+            }
+
+            if (_tabPrefix.StartsWith(core.AppCommands.CONNECT_KEYWORD, StringComparison.CurrentCultureIgnoreCase))
+            {
+                HandleConnectionTabComplete(_tabPrefix);
             }
         }
 
@@ -123,6 +128,13 @@ namespace SQLineGUI
             
             string line = commandPrefix + " " + outputItem;
             ConsoleInput.SetInput(line);
+        }
+
+        private static void HandleConnectionTabComplete(string currentInput)
+        {
+            currentInput = currentInput.Replace(core.AppCommands.CONNECT_KEYWORD, string.Empty).Trim();
+            var list = core.AppCache.Settings.Connections.Select(con => con.Name).ToList();
+            HandleTabAutoComplete(currentInput, core.AppCommands.CONNECT_KEYWORD, list);
         }
 
 

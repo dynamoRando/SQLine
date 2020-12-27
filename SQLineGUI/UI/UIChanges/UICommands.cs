@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace SQLineGUI.UI.UIChanges
+namespace SQLine.UI.UIChanges
 {
     static class UICommands
     {
