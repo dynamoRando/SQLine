@@ -88,7 +88,7 @@ namespace SQLine
                     label += $" [Database]: {core.AppCache.CurrentDatabase}";
                 }
 
-                ConsoleInput.SetLabel(label);
+                ConsoleInput.SetWindowTitle(label);
             }
 
         }

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Net;
+using System.Net.NetworkInformation;
 using System.Text;
 using System.Threading.Tasks;
 using Terminal.Gui;
@@ -17,27 +18,16 @@ namespace SQLine
         #endregion
 
         #region Private Fields
-        static Label _label;
         static TextField _input;
         static Label _statusUpdate;
+        static Label _labelCommandDescription;
+        static ListView _listPossibleCommandsView;
+        static ListView _listPossibleCommandExampleView;
+        static List<string> _listPossibleCommands = new List<string>();
+        static List<string> _commandExamples = new List<string>();
         #endregion
 
         #region Public Methods
-        static internal void SetInput(string input)
-        {
-            _input.Text = input;
-        }
-
-        internal static void SetLabel(string input)
-        {
-            _label.Text = input;
-        }
-
-        internal static void SetStatusLabel(string input)
-        {
-            _statusUpdate.Text = input;
-        }
-
         static internal void Init()
         {
             Window = new Window("Console [Press Esc to quit application]")
@@ -45,21 +35,14 @@ namespace SQLine
                 X = 0,
                 Y = 1,
                 Width = 100,
-                Height = 7
+                Height = 20
             };
 
             _input = new TextField(string.Empty)
             {
                 X = 1,
                 Y = 1,
-                Width = Dim.Percent(40),
-            };
-
-            _label = new Label()
-            {
-                X = Pos.Right(_input) + 1,
-                Y = Pos.Top(_input),
-                Width = Dim.Fill(1)
+                Width = Dim.Percent(95),
             };
 
             _statusUpdate = new Label()
@@ -69,17 +52,119 @@ namespace SQLine
                 Width = Dim.Percent(90)
             };
 
+            var labelPossibleCommands = new Label()
+            {
+                X = 1,
+                Y = Pos.Bottom(_statusUpdate) + 1,
+                Width = Dim.Percent(90)
+            };
+
+            labelPossibleCommands.Text = " - Possible Commands:";
+
+            _listPossibleCommandsView = new ListView(_listPossibleCommands)
+            {
+                X = 1,
+                Y = Pos.Bottom(labelPossibleCommands) + 1,
+                Width = Dim.Percent(95),
+                Height = Dim.Percent(25)
+            };
+
+            _listPossibleCommandsView.SelectedItemChanged += _listPossibleCommandsView_SelectedItemChanged;
+
+            _labelCommandDescription = new Label()
+            {
+                X = 1,
+                Y = Pos.Bottom(_listPossibleCommandsView) + 1,
+                Width = Dim.Percent(90),
+                Height = 2
+            };
+
+            //_labelCommandDescription.Text = "[Command Description] /r/n" + Environment.NewLine + " foo";
+
+            var labelCommandExamples = new Label()
+            {
+                X = 1,
+                Y = Pos.Bottom(_labelCommandDescription) + 1,
+                Width = Dim.Percent(90)
+            };
+
+            labelCommandExamples.Text = " - Examples:";
+
+            _listPossibleCommandExampleView = new ListView(_commandExamples)
+            {
+                X = 1,
+                Y = Pos.Bottom(labelCommandExamples) + 1,
+                Width = Dim.Percent(95),
+                Height = Dim.Percent(25)
+            };
+
             Window.Add(_input);
-            Window.Add(_label);
             Window.Add(_statusUpdate);
+            Window.Add(labelPossibleCommands);
+            Window.Add(_listPossibleCommandsView);
+            Window.Add(_labelCommandDescription);
+            Window.Add(labelCommandExamples);
+            Window.Add(_listPossibleCommandExampleView);
 
-            Debug.WriteLine("Registering KeyDown Event");
-            Window.KeyDown += Window_KeyDown;
+            Debug.WriteLine("Registering Key Events");
 
+            _input.KeyDown += _input_KeyDown;
+            _input.KeyUp += _input_KeyUp;
+            
             ListenForCoreEvents();
         }
 
-        private static void Window_KeyDown(View.KeyEventEventArgs obj)
+        static internal void SetWindowTitle(string input)
+        {
+            Window.Title = $"Console {input}";
+        }
+        static internal void SetInput(string input)
+        {
+            _input.Text = input;
+        }
+
+        internal static void SetStatusLabel(string input)
+        {
+            _statusUpdate.Text = input;
+        }
+
+        #endregion
+
+        #region Private Methods
+        private static void _input_KeyUp(View.KeyEventEventArgs obj)
+        {
+            string input = _input.Text.ToString();
+            Key key = obj.KeyEvent.Key;
+
+            switch (key)
+            {
+                case Key.Enter:
+                    if (input == string.Empty)
+                    {
+                        return;
+                    }
+                    else
+                    {
+                        ResetCommandSuggestions();
+                    }
+
+                    break;
+                case Key.Tab:
+                    TabBehavior.HandleTab(input);
+                    break;
+                case Key.CursorUp:
+                    KeyUpBehavior.HandleKeyUp();
+                    break;
+                case Key.Esc:
+                    EscBehavior.HandleEsc();
+                    break;
+                default:
+                    HandleCommandSuggestions();
+                    break;
+            }
+        }
+
+        private static void _input_KeyDown(View.KeyEventEventArgs obj)
         {
             string input = _input.Text.ToString();
             Key key = obj.KeyEvent.Key;
@@ -97,6 +182,7 @@ namespace SQLine
                     {
                         EnterBehavior.HandleEnter(input);
                         _input.Text = string.Empty;
+                        ResetCommandSuggestions();
                     }
 
                     break;
@@ -114,9 +200,61 @@ namespace SQLine
             }
         }
 
-        #endregion
+        private static void _listPossibleCommandsView_SelectedItemChanged(ListViewItemEventArgs obj)
+        {
+            var item = _listPossibleCommandsView.SelectedItem;
 
-        #region Private Methods
+            if (_listPossibleCommands.Count() == 0)
+            {
+                return;
+            }
+
+            var selectedCommand = _listPossibleCommands[item];
+            var possibleCommand = core.AppCommands.GetAppCommandDetails().
+                Where(c => c.CommandText.StartsWith(selectedCommand, StringComparison.CurrentCultureIgnoreCase)).ToList().FirstOrDefault();
+
+            if (possibleCommand != null)
+            {
+                _commandExamples.Clear();
+                _commandExamples.AddRange(possibleCommand.CommandExamples);
+                _labelCommandDescription.Text = possibleCommand.CommandDescription;
+            }
+        }
+
+        private static void ResetCommandSuggestions()
+        {
+            _listPossibleCommands.Clear();
+            _commandExamples.Clear();
+            _labelCommandDescription.Text = string.Empty;
+        }
+
+        private static void HandleCommandSuggestions()
+        {
+            ResetCommandSuggestions();
+
+            string input = _input.Text.ToString();
+
+            Debug.WriteLine($"CommandSuggestions: {input}");
+
+            if (input == string.Empty)
+            {
+                ResetCommandSuggestions();
+                return;
+            }
+            else
+            {
+                var possibleCommands = core.AppCommands.GetAppCommandDetails().Where(c => c.CommandText.StartsWith(input, StringComparison.CurrentCultureIgnoreCase)).ToList();
+                _listPossibleCommands.AddRange(possibleCommands.Select(possible => possible.CommandText).ToList());
+
+                if (_listPossibleCommands.Count == 1)
+                {
+                    var command = _listPossibleCommands.First();
+                    var commandExamples = possibleCommands.Where(c => c.CommandText == command).First().CommandExamples;
+                    _commandExamples.AddRange(commandExamples);
+                }
+            }
+        }
+
         private static void ListenForCoreEvents()
         {
             core.App.GettingDatabases += HandleGettingDatabase;
