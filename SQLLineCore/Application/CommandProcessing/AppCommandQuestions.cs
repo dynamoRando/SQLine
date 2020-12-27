@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 
 namespace SQLineCore
 {
@@ -88,9 +89,33 @@ namespace SQLineCore
                 }
                 else
                 {
-                    // show all tables with the specified prefix
-                    string prefix = command.Replace(AppCommands.QUESTION_TABLE, string.Empty).Trim();
-                    result = App.ListTables(prefix, string.Empty);
+                    //? t -schema foo
+                    //? t -schema foo prefix
+                    if (command.Contains(AppCommands.SCHEMA, System.StringComparison.CurrentCultureIgnoreCase))
+                    {
+                        string schemaName = string.Empty;
+                        string prefix = string.Empty;
+
+                        var array = command.Split(" ");
+                        var items = array.ToList();
+                        items.Remove(AppCommands.QUESTION);
+                        items.Remove("t");
+                        int index = items.IndexOf("-schema");
+                        schemaName = items[index + 1];
+                        if (items.Count() > index + 2)
+                        {
+                            prefix = items[index + 2];
+                        }
+
+                        result = App.ListTables(prefix, schemaName);
+                    }
+                    else
+                    {
+                        //? t prefix
+                        // show all tables with the specified prefix
+                        string prefix = command.Replace(AppCommands.QUESTION_TABLE, string.Empty).Trim();
+                        result = App.ListTables(prefix, string.Empty);
+                    }
                 }
             }
 
