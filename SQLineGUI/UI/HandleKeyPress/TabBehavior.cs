@@ -133,10 +133,9 @@ namespace SQLine
         private static void HandleConnectionTabComplete(string currentInput)
         {
             currentInput = currentInput.Replace(core.AppCommands.CONNECT_KEYWORD, string.Empty).Trim();
-            var list = core.AppCache.Settings.Connections.Select(con => con.Name).ToList();
+            var list = core.AppCache.Settings.Connections.Select(con => con.Nickname).ToList();
             HandleTabAutoComplete(currentInput, core.AppCommands.CONNECT_KEYWORD, list);
         }
-
 
         #endregion
 

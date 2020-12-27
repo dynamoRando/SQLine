@@ -86,7 +86,7 @@ namespace SQLine
                 AppCache.Settings.Connections = new List<ConnectionPreference>();
 
                 var connection = new ConnectionPreference();
-                connection.Name = "dev";
+                connection.Nickname = "dev";
                 connection.UserName = "sa";
                 connection.Password = "";
                 connection.ServerName = "localhost";
