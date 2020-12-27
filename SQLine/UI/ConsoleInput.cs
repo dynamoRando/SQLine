@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 using Terminal.Gui;
 using core = SQLineCore;
 
-namespace SQLineGUI
+namespace SQLine
 {
     static class ConsoleInput
     {
@@ -19,6 +19,7 @@ namespace SQLineGUI
         #region Private Fields
         static Label _label;
         static TextField _input;
+        static Label _statusUpdate;
         #endregion
 
         #region Public Methods
@@ -32,6 +33,11 @@ namespace SQLineGUI
             _label.Text = input;
         }
 
+        internal static void SetStatusLabel(string input)
+        {
+            _statusUpdate.Text = input;
+        }
+
         static internal void Init()
         {
             Window = new Window("Console [Press Esc to quit application]")
@@ -39,7 +45,7 @@ namespace SQLineGUI
                 X = 0,
                 Y = 1,
                 Width = 100,
-                Height = 5
+                Height = 7
             };
 
             _input = new TextField(string.Empty)
@@ -56,11 +62,21 @@ namespace SQLineGUI
                 Width = Dim.Fill(1)
             };
 
+            _statusUpdate = new Label()
+            {
+                X = 1,
+                Y = Pos.Bottom(_input) + 1,
+                Width = Dim.Percent(90)
+            };
+
             Window.Add(_input);
             Window.Add(_label);
+            Window.Add(_statusUpdate);
 
             Debug.WriteLine("Registering KeyDown Event");
             Window.KeyDown += Window_KeyDown;
+
+            ListenForCoreEvents();
         }
 
         private static void Window_KeyDown(View.KeyEventEventArgs obj)
@@ -101,6 +117,45 @@ namespace SQLineGUI
         #endregion
 
         #region Private Methods
+        private static void ListenForCoreEvents()
+        {
+            core.App.GettingDatabases += HandleGettingDatabase;
+            core.App.GotDatabases += App_GotDatabases;
+            core.App.ConnectingToServer += HandleConnecting;
+            core.App.ConnectedToServer += App_ConnectedToServer;
+            core.App.ExecutingQuery += App_ExecutingQuery;
+            core.App.ExecutedQuery += App_ExecutedQuery;
+        }
+
+        private static void App_ExecutedQuery(object sender, EventArgs e)
+        {
+            _statusUpdate.Text = "Executed Query.";
+        }
+
+        private static void App_ExecutingQuery(object sender, EventArgs e)
+        {
+            _statusUpdate.Text = "Executing Query...";
+        }
+
+        private static void App_GotDatabases(object sender, EventArgs e)
+        {
+            _statusUpdate.Text = "Got databases.";
+        }
+
+        private static void App_ConnectedToServer(object sender, EventArgs e)
+        {
+            _statusUpdate.Text = "Connected to server.";
+        }
+
+        private static void HandleConnecting(object sender, EventArgs e)
+        {
+            _statusUpdate.Text = "Connecting...";
+        }
+
+        private static void HandleGettingDatabase(object sender, EventArgs e)
+        {
+            _statusUpdate.Text = "Getting databases...";
+        }
         #endregion
 
 

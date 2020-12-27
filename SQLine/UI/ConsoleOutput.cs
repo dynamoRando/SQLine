@@ -1,11 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Data;
 using Terminal.Gui;
+using Terminal.Gui.Views;
 
-namespace SQLineGUI
+namespace SQLine
 {
     static class ConsoleOutput
     {
@@ -15,9 +14,9 @@ namespace SQLineGUI
 
         #region Private Fields
         static List<string> _outputList = new List<string>();
-        static Label _label;
         static ListView _output;
-        static ScrollView _outputScroll;
+        static TableView _table;
+        static TableStyle _tableStyle;
         #endregion
 
         #region Public Methods
@@ -26,7 +25,7 @@ namespace SQLineGUI
             Window = new Window("Output [Scroll Up To See History]")
             {
                 X = 0,
-                Y = 7,
+                Y = 9,
                 Width = 100,
                 Height = Dim.Fill()
             };
@@ -39,25 +38,43 @@ namespace SQLineGUI
                 Height = Dim.Fill(),
             };
 
-            //_outputScroll = new ScrollView(new Rect(2, 2, 50, 20))
-            _outputScroll = new ScrollView()
+            _table = new TableView()
             {
                 X = 0,
                 Y = 0,
                 Width = Dim.Fill(),
                 Height = Dim.Fill(),
-                ContentSize = new Size(200, 100),
-                ShowVerticalScrollIndicator = true,
-                ShowHorizontalScrollIndicator = true,
             };
 
-            _outputScroll.Add(_output);
+            _tableStyle = new TableStyle();
+            _tableStyle.AlwaysShowHeaders = true;
 
-            _outputScroll.KeepContentAlwaysInViewport = true;
+            _table.Style = _tableStyle;
 
-            Window.Add(_outputScroll);
+            Window.Add(_output);
+            Window.Add(_table);
 
-            //Window.Add(_output);
+            HideTable();
+        }
+
+        internal static void HideTable()
+        {
+            _table.Visible = false;
+        }
+
+        internal static void ShowTable()
+        {
+            _table.Visible = true;
+        }
+
+        internal static void HideOutput()
+        {
+            _output.Visible = false;
+        }
+
+        internal static void ShowOutput()
+        {
+            _output.Visible = true;
         }
 
         internal static void SetLabel(string content)
@@ -83,7 +100,17 @@ namespace SQLineGUI
         {
             _outputList.Add(DateTime.Now.ToString() + " >>"); ;
             _outputList.AddRange(contents);
-            SetCurrentSeletedPosition();
+            HideTable();
+            ShowOutput();
+            SetCurrentSelectedPosition();
+        }
+
+        internal static void ShowTableData(DataTable data)
+        {
+            
+            _table.Table = data;
+            HideOutput();
+            ShowTable();
         }
 
         internal static void Hide()
@@ -104,11 +131,7 @@ namespace SQLineGUI
             _output.Height = Dim.Fill();
         }
 
-        private static void SetScrollViewContentSize(int width, int height)
-        {
-            _outputScroll.ContentSize = new Size(width, height);
-        }
-        private static void SetCurrentSeletedPosition()
+        private static void SetCurrentSelectedPosition()
         {
             int maxEntry = 0;
 
@@ -133,6 +156,7 @@ namespace SQLineGUI
             _output.MoveEnd();
             _output.SelectedItem = maxEntry;
         }
+        
         #endregion
     }
 }

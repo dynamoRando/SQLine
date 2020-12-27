@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Terminal.Gui;
 
-namespace SQLineGUI
+namespace SQLine
 {
     static class TextEditor
     {

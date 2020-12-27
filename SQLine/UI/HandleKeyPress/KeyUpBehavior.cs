@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace SQLine.UI
+namespace SQLine
 {
     static class KeyUpBehavior
     {
@@ -37,6 +37,11 @@ namespace SQLine.UI
 
             string line = string.Empty;
 
+            if (_enteredCommands.Count() == 0)
+            {
+                return;
+            }
+
             if (_keyUpCount <= _enteredCommands.Count())
             {
                 line = _enteredCommands[_keyUpCount - 1];
@@ -46,14 +51,10 @@ namespace SQLine.UI
                 _keyUpCount -= _enteredCommands.Count();
                 line = _enteredCommands[_keyUpCount - 1];
             }
-            
-            ConsoleInterface.ClearCurrentLine();
-            ConsoleInterface.ShowPrefix();
-            ConsoleInterface.Builder.Clear();
-            ConsoleInterface.Builder.Append(line);
-            Console.Write(ConsoleInterface.Builder.ToString());
 
             _enteredCommands.Reverse();
+
+            HandleResult(line);
         }
 
         internal static void AddCommandToHistory(string command)
@@ -63,6 +64,10 @@ namespace SQLine.UI
         #endregion
 
         #region Private Methods
+        private static void HandleResult(string result)
+        {
+            ConsoleInput.SetInput(result);
+        }
         #endregion
 
 

@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace SQLineGUI
+namespace SQLine
 {
     internal static class EscBehavior
     {

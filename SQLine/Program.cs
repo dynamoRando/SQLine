@@ -1,7 +1,7 @@
 ﻿using System;
 using Terminal.Gui;
 
-namespace SQLineGUI
+namespace SQLine
 {
     class Program
     {
