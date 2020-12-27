@@ -125,6 +125,7 @@ namespace SQLineCore
             command.CommandDescription = "Lists the tables in the current database";
             command.CommandExamples = new List<string>();
             command.CommandExamples.Add(QUESTION_TABLE);
+            command.CommandExamples.Add(QUESTION_TABLE + " <prefix>");
             command.CommandExamples.Add($"{QUESTION_TABLE} -schema <schemaName> <tablePrefix>");
 
             result.Add(command);
