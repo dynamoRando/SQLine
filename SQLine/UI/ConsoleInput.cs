@@ -25,6 +25,7 @@ namespace SQLine
         static ListView _listPossibleCommandExampleView;
         static List<string> _listPossibleCommands = new List<string>();
         static List<string> _commandExamples = new List<string>();
+        static Window _commandGuideWindow;
         #endregion
 
         #region Public Methods
@@ -35,14 +36,14 @@ namespace SQLine
                 X = 0,
                 Y = 1,
                 Width = 100,
-                Height = 20
+                Height = 25
             };
 
             _input = new TextField(string.Empty)
             {
                 X = 1,
                 Y = 1,
-                Width = Dim.Percent(95),
+                Width = Dim.Percent(95)
             };
 
             _statusUpdate = new Label()
@@ -52,10 +53,18 @@ namespace SQLine
                 Width = Dim.Percent(90)
             };
 
-            var labelPossibleCommands = new Label()
+            _commandGuideWindow = new Window("Command Guide (Click to see description)")
             {
                 X = 1,
                 Y = Pos.Bottom(_statusUpdate) + 1,
+                Width = Dim.Percent(90),
+                Height = Dim.Fill()
+            };
+
+            var labelPossibleCommands = new Label()
+            {
+                X = 1,
+                Y = 1,
                 Width = Dim.Percent(90)
             };
 
@@ -98,19 +107,25 @@ namespace SQLine
                 Height = Dim.Percent(25)
             };
 
+            TestLayout();
+
+            _commandGuideWindow.Add(labelPossibleCommands);
+            _commandGuideWindow.Add(_listPossibleCommandsView);
+            _commandGuideWindow.Add(_labelCommandDescription);
+            _commandGuideWindow.Add(labelCommandExamples);
+            _commandGuideWindow.Add(_listPossibleCommandExampleView);
+
             Window.Add(_input);
             Window.Add(_statusUpdate);
-            Window.Add(labelPossibleCommands);
-            Window.Add(_listPossibleCommandsView);
-            Window.Add(_labelCommandDescription);
-            Window.Add(labelCommandExamples);
-            Window.Add(_listPossibleCommandExampleView);
+            Window.Add(_commandGuideWindow);
 
             Debug.WriteLine("Registering Key Events");
 
             _input.KeyDown += _input_KeyDown;
             _input.KeyUp += _input_KeyUp;
+
             
+
             ListenForCoreEvents();
         }
 
@@ -131,6 +146,14 @@ namespace SQLine
         #endregion
 
         #region Private Methods
+
+        private static void TestLayout()
+        {
+            _listPossibleCommands.Add("TEST 1");
+            _listPossibleCommands.Add("TEST 2");
+            _listPossibleCommands.Add("TEST 3");
+        }
+
         private static void _input_KeyUp(View.KeyEventEventArgs obj)
         {
             string input = _input.Text.ToString();
