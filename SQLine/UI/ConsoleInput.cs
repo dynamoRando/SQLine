@@ -128,8 +128,6 @@ namespace SQLine
             ListenForCoreEvents();
         }
 
-        
-
         static internal void SetWindowTitle(string input)
         {
             Window.Title = $"Console {input}";
@@ -232,7 +230,8 @@ namespace SQLine
             }
 
             var selectedCommand = _listPossibleCommands[item];
-            var possibleCommand = core.AppCommands.GetAppCommandDetails().
+
+            var possibleCommand = GetAllCommands().
                 Where(c => c.CommandText.StartsWith(selectedCommand, StringComparison.CurrentCultureIgnoreCase)).ToList().FirstOrDefault();
 
             if (possibleCommand != null)
@@ -241,6 +240,15 @@ namespace SQLine
                 _commandExamples.AddRange(possibleCommand.CommandExamples);
                 _labelCommandDescription.Text = possibleCommand.CommandDescription;
             }
+        }
+
+        private static List<core.AppCommandDetail> GetAllCommands()
+        {
+            var list = new List<core.AppCommandDetail>();
+            list.AddRange(core.AppCommands.GetAppCommandDetails());
+            list.AddRange(UICommands.GetUICommandDetails());
+
+            return list;
         }
 
         private static void ResetCommandSuggestions()
@@ -265,7 +273,7 @@ namespace SQLine
             }
             else
             {
-                var possibleCommands = core.AppCommands.GetAppCommandDetails().Where(c => c.CommandText.StartsWith(input, StringComparison.CurrentCultureIgnoreCase)).ToList();
+                var possibleCommands = GetAllCommands().Where(c => c.CommandText.StartsWith(input, StringComparison.CurrentCultureIgnoreCase)).ToList();
                 _listPossibleCommands.AddRange(possibleCommands.Select(possible => possible.CommandText).ToList());
 
                 if (_listPossibleCommands.Count == 1)

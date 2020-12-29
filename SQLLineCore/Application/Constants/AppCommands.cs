@@ -108,7 +108,7 @@ namespace SQLineCore
             command.CommandText = USE_KEYWORD;
             command.CommandDescription = "Specifies the current database";
             command.CommandExamples = new List<string>();
-            command.CommandExamples.Add("use <databaseName>");
+            command.CommandExamples.Add($"{USE_KEYWORD} <databaseName>");
 
             result.Add(command);
 
