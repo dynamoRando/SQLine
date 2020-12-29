@@ -88,8 +88,6 @@ namespace SQLine
                 Height = 2
             };
 
-            //_labelCommandDescription.Text = "[Command Description] /r/n" + Environment.NewLine + " foo";
-
             var labelCommandExamples = new Label()
             {
                 X = 1,
@@ -107,7 +105,7 @@ namespace SQLine
                 Height = Dim.Percent(25)
             };
 
-            TestLayout();
+            //TestLayout();
 
             _commandGuideWindow.Add(labelPossibleCommands);
             _commandGuideWindow.Add(_listPossibleCommandsView);
@@ -121,13 +119,16 @@ namespace SQLine
 
             Debug.WriteLine("Registering Key Events");
 
-            _input.KeyDown += _input_KeyDown;
+            // this seems stupid, but the Tab event does not always fire on the keyUp event
+            // because it is trying to move to the next control to focus and there does not appear to be a 
+            // way to prevent that from happening
             _input.KeyUp += _input_KeyUp;
-
-            
+            _input.KeyDown += _input_KeyDown;
 
             ListenForCoreEvents();
         }
+
+        
 
         static internal void SetWindowTitle(string input)
         {
@@ -154,46 +155,38 @@ namespace SQLine
             _listPossibleCommands.Add("TEST 3");
         }
 
-        private static void _input_KeyUp(View.KeyEventEventArgs obj)
-        {
-            string input = _input.Text.ToString();
-            Key key = obj.KeyEvent.Key;
-
-            switch (key)
-            {
-                case Key.Enter:
-                    if (input == string.Empty)
-                    {
-                        return;
-                    }
-                    else
-                    {
-                        ResetCommandSuggestions();
-                    }
-
-                    break;
-                case Key.Tab:
-                    TabBehavior.HandleTab(input);
-                    break;
-                case Key.CursorUp:
-                    KeyUpBehavior.HandleKeyUp();
-                    break;
-                case Key.Esc:
-                    EscBehavior.HandleEsc();
-                    break;
-                default:
-                    HandleCommandSuggestions();
-                    break;
-            }
-        }
-
         private static void _input_KeyDown(View.KeyEventEventArgs obj)
         {
+            Debug.WriteLine("KeyDown Event");
+
             string input = _input.Text.ToString();
             Key key = obj.KeyEvent.Key;
 
             Debug.WriteLine(DateTime.Now.ToString() + " ConsoleInput: " + key.ToString());
+            Debug.WriteLine($"{DateTime.Now.ToString()} ConsoleInput Value: {input}");
 
+            // we only handle the Tab keypress here since the KeyUp event was not always catching it
+            switch (key)
+            {
+                case Key.Tab:
+                    TabBehavior.HandleTab(input);
+                    Window.FocusPrev();
+                    break;
+                default:
+                    break;
+            }
+        }
+
+        private static void _input_KeyUp(View.KeyEventEventArgs obj)
+        {
+            Debug.WriteLine("KeyUp Event");
+
+            string input = _input.Text.ToString();
+            Key key = obj.KeyEvent.Key;
+
+            Debug.WriteLine(DateTime.Now.ToString() + " ConsoleInput: " + key.ToString());
+            Debug.WriteLine($"{DateTime.Now.ToString()} ConsoleInput Value: {input}");
+            
             switch (key)
             {
                 case Key.Enter:
@@ -210,7 +203,9 @@ namespace SQLine
 
                     break;
                 case Key.Tab:
-                    TabBehavior.HandleTab(input);
+                    // this was not always being captured, so moved to the key down event
+                    // TabBehavior.HandleTab(input);
+                    // Window.FocusPrev();
                     break;
                 case Key.CursorUp:
                     KeyUpBehavior.HandleKeyUp();
@@ -218,7 +213,11 @@ namespace SQLine
                 case Key.Esc:
                     EscBehavior.HandleEsc();
                     break;
+                case Key.Backspace:
+                    TabBehavior.ResetTabValues();
+                    break;
                 default:
+                    HandleCommandSuggestions();
                     break;
             }
         }
