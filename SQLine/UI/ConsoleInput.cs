@@ -25,6 +25,7 @@ namespace SQLine
         static ListView _listPossibleCommandExampleView;
         static List<string> _listPossibleCommands = new List<string>();
         static List<string> _commandExamples = new List<string>();
+        static Window _commandGuideWindow;
         #endregion
 
         #region Public Methods
@@ -35,14 +36,14 @@ namespace SQLine
                 X = 0,
                 Y = 1,
                 Width = 100,
-                Height = 20
+                Height = 25
             };
 
             _input = new TextField(string.Empty)
             {
                 X = 1,
                 Y = 1,
-                Width = Dim.Percent(95),
+                Width = Dim.Percent(95)
             };
 
             _statusUpdate = new Label()
@@ -52,10 +53,18 @@ namespace SQLine
                 Width = Dim.Percent(90)
             };
 
-            var labelPossibleCommands = new Label()
+            _commandGuideWindow = new Window("Command Guide (Click to see description)")
             {
                 X = 1,
                 Y = Pos.Bottom(_statusUpdate) + 1,
+                Width = Dim.Percent(90),
+                Height = Dim.Fill()
+            };
+
+            var labelPossibleCommands = new Label()
+            {
+                X = 1,
+                Y = 1,
                 Width = Dim.Percent(90)
             };
 
@@ -79,8 +88,6 @@ namespace SQLine
                 Height = 2
             };
 
-            //_labelCommandDescription.Text = "[Command Description] /r/n" + Environment.NewLine + " foo";
-
             var labelCommandExamples = new Label()
             {
                 X = 1,
@@ -98,19 +105,26 @@ namespace SQLine
                 Height = Dim.Percent(25)
             };
 
+            //TestLayout();
+
+            _commandGuideWindow.Add(labelPossibleCommands);
+            _commandGuideWindow.Add(_listPossibleCommandsView);
+            _commandGuideWindow.Add(_labelCommandDescription);
+            _commandGuideWindow.Add(labelCommandExamples);
+            _commandGuideWindow.Add(_listPossibleCommandExampleView);
+
             Window.Add(_input);
             Window.Add(_statusUpdate);
-            Window.Add(labelPossibleCommands);
-            Window.Add(_listPossibleCommandsView);
-            Window.Add(_labelCommandDescription);
-            Window.Add(labelCommandExamples);
-            Window.Add(_listPossibleCommandExampleView);
+            Window.Add(_commandGuideWindow);
 
             Debug.WriteLine("Registering Key Events");
 
-            _input.KeyDown += _input_KeyDown;
+            // this seems stupid, but the Tab event does not always fire on the keyUp event
+            // because it is trying to move to the next control to focus and there does not appear to be a 
+            // way to prevent that from happening
             _input.KeyUp += _input_KeyUp;
-            
+            _input.KeyDown += _input_KeyDown;
+
             ListenForCoreEvents();
         }
 
@@ -131,46 +145,46 @@ namespace SQLine
         #endregion
 
         #region Private Methods
-        private static void _input_KeyUp(View.KeyEventEventArgs obj)
+
+        private static void TestLayout()
         {
-            string input = _input.Text.ToString();
-            Key key = obj.KeyEvent.Key;
-
-            switch (key)
-            {
-                case Key.Enter:
-                    if (input == string.Empty)
-                    {
-                        return;
-                    }
-                    else
-                    {
-                        ResetCommandSuggestions();
-                    }
-
-                    break;
-                case Key.Tab:
-                    TabBehavior.HandleTab(input);
-                    break;
-                case Key.CursorUp:
-                    KeyUpBehavior.HandleKeyUp();
-                    break;
-                case Key.Esc:
-                    EscBehavior.HandleEsc();
-                    break;
-                default:
-                    HandleCommandSuggestions();
-                    break;
-            }
+            _listPossibleCommands.Add("TEST 1");
+            _listPossibleCommands.Add("TEST 2");
+            _listPossibleCommands.Add("TEST 3");
         }
 
         private static void _input_KeyDown(View.KeyEventEventArgs obj)
         {
+            Debug.WriteLine("KeyDown Event");
+
             string input = _input.Text.ToString();
             Key key = obj.KeyEvent.Key;
 
             Debug.WriteLine(DateTime.Now.ToString() + " ConsoleInput: " + key.ToString());
+            Debug.WriteLine($"{DateTime.Now.ToString()} ConsoleInput Value: {input}");
 
+            // we only handle the Tab keypress here since the KeyUp event was not always catching it
+            switch (key)
+            {
+                case Key.Tab:
+                    TabBehavior.HandleTab(input);
+                    Window.FocusPrev();
+                    break;
+                default:
+                    break;
+            }
+        }
+
+        private static void _input_KeyUp(View.KeyEventEventArgs obj)
+        {
+            Debug.WriteLine("KeyUp Event");
+
+            string input = _input.Text.ToString();
+            Key key = obj.KeyEvent.Key;
+
+            Debug.WriteLine(DateTime.Now.ToString() + " ConsoleInput: " + key.ToString());
+            Debug.WriteLine($"{DateTime.Now.ToString()} ConsoleInput Value: {input}");
+            
             switch (key)
             {
                 case Key.Enter:
@@ -187,7 +201,9 @@ namespace SQLine
 
                     break;
                 case Key.Tab:
-                    TabBehavior.HandleTab(input);
+                    // this was not always being captured, so moved to the key down event
+                    // TabBehavior.HandleTab(input);
+                    // Window.FocusPrev();
                     break;
                 case Key.CursorUp:
                     KeyUpBehavior.HandleKeyUp();
@@ -195,7 +211,11 @@ namespace SQLine
                 case Key.Esc:
                     EscBehavior.HandleEsc();
                     break;
+                case Key.Backspace:
+                    TabBehavior.ResetTabValues();
+                    break;
                 default:
+                    HandleCommandSuggestions();
                     break;
             }
         }
@@ -210,7 +230,8 @@ namespace SQLine
             }
 
             var selectedCommand = _listPossibleCommands[item];
-            var possibleCommand = core.AppCommands.GetAppCommandDetails().
+
+            var possibleCommand = GetAllCommands().
                 Where(c => c.CommandText.StartsWith(selectedCommand, StringComparison.CurrentCultureIgnoreCase)).ToList().FirstOrDefault();
 
             if (possibleCommand != null)
@@ -219,6 +240,15 @@ namespace SQLine
                 _commandExamples.AddRange(possibleCommand.CommandExamples);
                 _labelCommandDescription.Text = possibleCommand.CommandDescription;
             }
+        }
+
+        private static List<core.AppCommandDetail> GetAllCommands()
+        {
+            var list = new List<core.AppCommandDetail>();
+            list.AddRange(core.AppCommands.GetAppCommandDetails());
+            list.AddRange(UICommands.GetUICommandDetails());
+
+            return list;
         }
 
         private static void ResetCommandSuggestions()
@@ -243,7 +273,7 @@ namespace SQLine
             }
             else
             {
-                var possibleCommands = core.AppCommands.GetAppCommandDetails().Where(c => c.CommandText.StartsWith(input, StringComparison.CurrentCultureIgnoreCase)).ToList();
+                var possibleCommands = GetAllCommands().Where(c => c.CommandText.StartsWith(input, StringComparison.CurrentCultureIgnoreCase)).ToList();
                 _listPossibleCommands.AddRange(possibleCommands.Select(possible => possible.CommandText).ToList());
 
                 if (_listPossibleCommands.Count == 1)

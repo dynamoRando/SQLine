@@ -20,6 +20,10 @@ namespace SQLine
         #endregion
 
         #region Public Methods
+
+        /// <summary>
+        /// Resets the key up count to stop trying to scroll backwards thru command history
+        /// </summary>
         internal static void ResetKeyUpCount()
         {
             _keyUpCount = 0;
