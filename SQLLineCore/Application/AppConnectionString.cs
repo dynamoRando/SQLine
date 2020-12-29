@@ -22,7 +22,15 @@ namespace SQLineCore
 
             public static string GetTrustedCurrentConnectionString()
             {
-                return $"Server={AppCache.ServerName};Database={AppCache.CurrentDatabase};Trusted_Connection = True;";
+                if (!string.IsNullOrEmpty(AppCache.CurrentDatabase))
+                {
+                    return $"Server={AppCache.ServerName};Database={AppCache.CurrentDatabase};Trusted_Connection = True;";
+                }
+                else
+                {
+                    return $"Server={AppCache.ServerName};Database=master;Trusted_Connection = True;";
+                }
+                
             }
 
             public static string GetUserNamePasswordConnection(string serverName, string userName, string password)
