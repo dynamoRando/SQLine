@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using System;
 
 namespace SQLineCore
 {
@@ -36,7 +37,6 @@ namespace SQLineCore
 
             return result;
         }
-
 
         internal static List<string> HandlePendingConnection(string command)
         {
@@ -97,9 +97,14 @@ namespace SQLineCore
                 result = App.GetDatabases(AppCache.ServerName);
             }
 
-            if (command.StartsWith(AppCommands.QUESTION_TABLE))
+            if (command.StartsWith(AppCommands.QUESTION_TABLE, StringComparison.CurrentCultureIgnoreCase))
             {
                 result = AppCommandQuestionTable.HandleCommand(command);
+            }
+
+            if (command.StartsWith(AppCommands.QUESTION_VIEW, StringComparison.CurrentCultureIgnoreCase))
+            {
+                result = AppCommandQuestionView.HandleCommand(command);
             }
 
             return result;

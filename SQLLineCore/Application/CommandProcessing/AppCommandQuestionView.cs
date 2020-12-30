@@ -4,7 +4,7 @@ using System.Text;
 
 namespace SQLineCore
 {
-    internal static class AppCommandQuestionStoredProcedure
+    internal static class AppCommandQuestionView
     {
         #region Public Methods
         internal static List<string> HandleCommand(string command)

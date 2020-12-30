@@ -80,6 +80,11 @@ namespace SQLineCore
         /// </summary>
         public const string SCHEMA = "schema";
 
+        /// <summary>
+        /// "? v"
+        /// </summary>
+        public const string QUESTION_VIEW = "? v";
+
         public static List<string> GetCommands()
         {
             var result = new List<string>();
@@ -96,6 +101,7 @@ namespace SQLineCore
             result.Add(QUIT);
             result.Add(EXIT);
             result.Add(SCHEMA);
+            result.Add(QUESTION_VIEW);
 
             return result;
         }
@@ -193,6 +199,14 @@ namespace SQLineCore
             command.CommandDescription = "Exits the application";
             command.CommandExamples = new List<string>();
             command.CommandExamples.Add(EXIT);
+
+            result.Add(command);
+
+            command = new AppCommandDetail();
+            command.CommandText = QUESTION_VIEW;
+            command.CommandDescription = "Lists the views in the current database";
+            command.CommandExamples = new List<string>();
+            command.CommandExamples.Add(QUESTION_VIEW);
 
             result.Add(command);
 
