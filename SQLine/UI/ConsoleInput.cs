@@ -142,6 +142,15 @@ namespace SQLine
             _statusUpdate.Text = input;
         }
 
+        internal static void ShowGuide()
+        {
+            _commandGuideWindow.Visible = true;
+        }
+
+        internal static void HideGuide()
+        {
+            _commandGuideWindow.Visible = false;
+        }
         #endregion
 
         #region Private Methods

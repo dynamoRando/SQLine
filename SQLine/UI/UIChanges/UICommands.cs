@@ -8,27 +8,29 @@ namespace SQLine
         /// <summary>
         /// "show"
         /// </summary>
-        public static string SHOW = "show";
+        public const string SHOW = "show";
         
         /// <summary>
         /// "hide"
         /// </summary>
-        public static string HIDE = "hide";
+        public const string HIDE = "hide";
         
         /// <summary>
         /// "size window"
         /// </summary>
-        public static string SIZE_WINDOW = "size window";
+        public const string SIZE_WINDOW = "size window";
         
         /// <summary>
         /// "editor"
         /// </summary>
-        public static string EDITOR = "editor";
+        public const string EDITOR = "editor";
         
         /// <summary>
         /// "output"
         /// </summary>
-        public static string OUTPUT = "output";
+        public const string OUTPUT = "output";
+
+        public const string GUIDE = "guide";
 
         internal static List<string> GetCommands()
         {
@@ -39,6 +41,7 @@ namespace SQLine
             result.Add(SIZE_WINDOW);
             result.Add(EDITOR);
             result.Add(OUTPUT);
+            result.Add(GUIDE);
 
             return result;
         }
@@ -51,7 +54,7 @@ namespace SQLine
             command.CommandText = SHOW;
             command.CommandDescription = "Displays a window";
             command.CommandExamples = new List<string>();
-            command.CommandExamples.Add($"{SHOW} {EDITOR}|{OUTPUT}");
+            command.CommandExamples.Add($"{SHOW} {EDITOR}|{OUTPUT}|{GUIDE}");
 
             result.Add(command);
 
@@ -59,7 +62,7 @@ namespace SQLine
             command.CommandText = HIDE;
             command.CommandDescription = "Hides a window";
             command.CommandExamples = new List<string>();
-            command.CommandExamples.Add($"{HIDE} {EDITOR}|{OUTPUT}");
+            command.CommandExamples.Add($"{HIDE} {EDITOR}|{OUTPUT}|{GUIDE}");
 
             result.Add(command);
 

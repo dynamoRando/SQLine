@@ -24,11 +24,14 @@ namespace SQLine
 
             switch(windowName)
             {
-                case "output":
+                case UICommands.OUTPUT:
                     ConsoleOutput.Hide();
                     break;
-                case "editor":
+                case UICommands.EDITOR:
                     TextEditor.Hide();
+                    break;
+                case UICommands.GUIDE:
+                    ConsoleInput.HideGuide();
                     break;
                 default:
                     break;
@@ -41,11 +44,14 @@ namespace SQLine
 
             switch (windowName)
             {
-                case "output":
+                case UICommands.OUTPUT:
                     ConsoleOutput.Show();
                     break;
-                case "editor":
+                case UICommands.EDITOR:
                     TextEditor.Show();
+                    break;
+                case UICommands.GUIDE:
+                    ConsoleInput.ShowGuide();
                     break;
                 default:
                     break;
