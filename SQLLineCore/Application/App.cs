@@ -6,7 +6,6 @@ using System.Data.SqlClient;
 using System.Linq;
 using System.Globalization;
 using SQLineCore;
-using SQLineCore.Application.CommandProcessing;
 using System.Resources;
 using System.IO;
 
@@ -37,12 +36,6 @@ namespace SQLineCore
         public static event EventHandler ConnectedToServer;
         public static event EventHandler GettingDatabases;
         public static event EventHandler GotDatabases;
-        public static event EventHandler GettingTableSchema;
-        public static event EventHandler GotTableSchema;
-        public static event EventHandler GettingTables;
-        public static event EventHandler GotTables;
-        public static event EventHandler ExecutingQuery;
-        public static event EventHandler ExecutedQuery;
         #endregion
 
         #region Public Methods
@@ -70,24 +63,21 @@ namespace SQLineCore
             return result;
         }
 
-        
-
+        /// <summary>
+        /// Executes a SQL query and returns the results
+        /// </summary>
+        /// <param name="command">The SQL statement to Execute</param>
+        /// <returns>The results of the SQL query</returns>
         public static DataTable ParseQuery(string command)
         {
-            DataTable result = new DataTable();
-
-            if (command.StartsWith(AppCommands.QUERY_KEYWORD + " "))
-            {
-                var executingQuery = ExecutingQuery;
-                executingQuery?.Invoke(null, null);
-                result = AppCommandQuery.GetQueryResult(command, App.Mode);
-                var executedQuery = ExecutedQuery;
-                executedQuery?.Invoke(null, null);
-            }
-
-            return result;
+            return AppDatabaseAction.ParseQuery(command);
         }
 
+        /// <summary>
+        /// Handles a command from the UI
+        /// </summary>
+        /// <param name="command">The command to parse and action on</param>
+        /// <returns>Results from the command, if any</returns>
         public static List<string> ParseCommand(string command)
         {
             var result = new List<string>();
@@ -126,16 +116,13 @@ namespace SQLineCore
             App.Mode = AppMode.UsingDatabase;
         }
 
+        /// <summary>
+        /// Returns the list of databases on the current server
+        /// </summary>
+        /// <returns></returns>
         public static List<string> ListCachedDatabases()
         {
-            var result = new List<string>();
-            result.Add($"Listing databases on server {AppCache.ServerName}");
-            foreach (var dbName in AppCache.Databases)
-            {
-                result.Add($"- {dbName}");
-            }
-
-            return result;
+            return AppDatabaseAction.ListCachedDatabases();
         }
 
         /// <summary>
@@ -146,76 +133,11 @@ namespace SQLineCore
         /// <returns>A list of tables in the database filtered by the parameters.</returns>
         public static List<string> ListTables(string prefix, string schema)
         {
-            var result = new List<string>();
-
-            if (!string.IsNullOrEmpty(schema) && string.IsNullOrEmpty(prefix))
-            {
-                result.Add($"Listing tables from database {AppCache.CurrentDatabase} on server {AppCache.ServerName} for schema {schema}");
-                var tables = AppCache.Tables.Where(t => t.SchemaName.Equals(schema, StringComparison.CurrentCultureIgnoreCase)).ToList();
-                foreach (var table in tables)
-                {
-                    result.Add($"- {table.FullName}");
-                }
-            }
-            else if (!string.IsNullOrEmpty(schema) && !string.IsNullOrEmpty(prefix))
-            {
-                result.Add($"Listing tables from database {AppCache.CurrentDatabase} on server {AppCache.ServerName} for schema {schema} with prefix '{prefix}'");
-                var tables = AppCache.Tables.
-                    Where(t => t.SchemaName.Equals(schema, StringComparison.CurrentCultureIgnoreCase))
-                    .Where(x => x.TableName.StartsWith(prefix, StringComparison.CurrentCultureIgnoreCase)).ToList();
-                foreach (var table in tables)
-                {
-                    result.Add($"- {table.FullName}");
-                }
-
-                result.Add($"Listing tables from database {AppCache.CurrentDatabase} on server {AppCache.ServerName} for schema {schema} that contain '{prefix}'");
-                var tables2 = AppCache.Tables.
-                    Where(t => t.SchemaName.Equals(schema, StringComparison.CurrentCultureIgnoreCase))
-                    .Where(x => x.TableName.Contains(prefix, StringComparison.CurrentCultureIgnoreCase)).ToList();
-                foreach (var table in tables2)
-                {
-                    result.Add($"- {table.FullName}");
-                }
-            }
-            // show every table
-            else if (string.IsNullOrEmpty(prefix) && string.IsNullOrEmpty(schema))
-            {
-                result.Add($"Listing tables from database {AppCache.CurrentDatabase} on server {AppCache.ServerName}");
-                foreach (var table in AppCache.Tables)
-                {
-                    result.Add($"- {table.FullName}");
-                }
-            }
-            // show filtered tables in every schema
-            else if (!string.IsNullOrEmpty(prefix) && string.IsNullOrEmpty(schema))
-            {
-                result.Add($"Listing tables from database {AppCache.CurrentDatabase} on server {AppCache.ServerName} with prefix '{prefix}'");
-                var tables = AppCache.Tables.Where(t => t.TableName.StartsWith(prefix, StringComparison.CurrentCultureIgnoreCase)).ToList();
-                foreach (var table in tables)
-                {
-                    result.Add($"- {table.FullName}");
-                }
-
-                result.Add($"Listing tables from database {AppCache.CurrentDatabase} on server {AppCache.ServerName} that contain '{prefix}'");
-                var tables2 = AppCache.Tables.Where(t => t.TableName.Contains(prefix, StringComparison.CurrentCultureIgnoreCase)).ToList();
-                foreach (var table in tables2)
-                {
-                    result.Add($"- {table.FullName}");
-                }
-            }
-
-            return result;
+            return AppTableAction.ListTables(prefix, schema);
         }
-
-        
 
         public static List<string> GetDatabases(string serverName, string userName, string password)
         {
-            EventHandler connecting = null;
-            EventHandler connected = null;
-            EventHandler gettingDatabases = null;
-            EventHandler gotDatabases = null;
-
             List<string> result = new List<string>();
             var connString = AppConnectionString.SQLServer.GetUserNamePasswordConnection(serverName, userName, password);
             using (var conn = new SqlConnection(connString))
@@ -228,9 +150,6 @@ namespace SQLineCore
 
                 using (SqlDataReader reader = comm.ExecuteReader())
                 {
-                    gettingDatabases = GettingDatabases;
-                    gettingDatabases.Invoke(null, null);
-
                     while (reader.Read())
                     {
                         string dbName = reader["name"].ToString();
@@ -238,9 +157,6 @@ namespace SQLineCore
                     }
                 }
             }
-
-            gotDatabases = GotDatabases;
-            gotDatabases?.Invoke(null, null);
 
             result = ListCachedDatabases();
 
@@ -288,25 +204,7 @@ namespace SQLineCore
 
         public static List<string> ShowTableSchema(string prefix)
         {
-            var result = new List<string>();
-
-            var table = AppCache.Tables.FirstOrDefault(t => string.Equals(t.TableName, prefix, StringComparison.CurrentCultureIgnoreCase));
-            if (table != null)
-            {
-                int maxColLength = table.Columns.Select(c => c.ColumnName.Length).ToList().Max();
-                result.Add($"Showing schema for table {table.SchemaName}.{table.TableName} in database {AppCache.CurrentDatabase} on server {AppCache.ServerName}");
-                string formatter = "{0,-" + maxColLength.ToString() + "} {1,-10} {2,10} {3,-5}";
-                string[] headers = { "COLUMNNAME", "DATATYPE", "MAXLENGTH", "ISNULLABLE" };
-                result.Add(string.Format(formatter, headers));
-
-                foreach (var column in table.Columns)
-                {
-                    string[] values = { column.ColumnName, column.DataType, column.MaxLength.ToString(), column.IsNullable.ToString() };
-                    result.Add(string.Format(formatter, values));
-                }
-            }
-
-            return result;
+            return AppTableAction.ShowTableSchema(prefix);
         }
 
         public static void LoadAppSettings(string filePath)

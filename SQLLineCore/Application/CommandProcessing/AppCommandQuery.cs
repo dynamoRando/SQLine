@@ -4,7 +4,7 @@ using System.Data;
 using System.Data.SqlClient;
 using System.Text;
 
-namespace SQLineCore.Application.CommandProcessing
+namespace SQLineCore
 {
     public static class AppCommandQuery
     {
