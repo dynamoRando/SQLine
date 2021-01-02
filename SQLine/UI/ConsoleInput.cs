@@ -142,6 +142,15 @@ namespace SQLine
             _statusUpdate.Text = input;
         }
 
+        internal static void ShowGuide()
+        {
+            _commandGuideWindow.Visible = true;
+        }
+
+        internal static void HideGuide()
+        {
+            _commandGuideWindow.Visible = false;
+        }
         #endregion
 
         #region Private Methods
@@ -291,18 +300,6 @@ namespace SQLine
             core.App.GotDatabases += App_GotDatabases;
             core.App.ConnectingToServer += HandleConnecting;
             core.App.ConnectedToServer += App_ConnectedToServer;
-            core.App.ExecutingQuery += App_ExecutingQuery;
-            core.App.ExecutedQuery += App_ExecutedQuery;
-        }
-
-        private static void App_ExecutedQuery(object sender, EventArgs e)
-        {
-            _statusUpdate.Text = "Executed Query.";
-        }
-
-        private static void App_ExecutingQuery(object sender, EventArgs e)
-        {
-            _statusUpdate.Text = "Executing Query...";
         }
 
         private static void App_GotDatabases(object sender, EventArgs e)
