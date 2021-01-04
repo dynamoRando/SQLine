@@ -240,6 +240,11 @@ namespace SQLineCore
             return AppTableAction.GetTables();
         }
 
+        public static List<string> GetViews()
+        {
+            return AppViewAction.GetViews();
+        }
+
         internal static void OpenConnection(SqlConnection connection)
         {
             var connecting = ConnectingToServer;

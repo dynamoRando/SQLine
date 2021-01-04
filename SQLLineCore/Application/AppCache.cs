@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using SQLineCore;
+using SQLineCore.DatabaseItem;
 
 namespace SQLineCore
 {
@@ -21,6 +22,7 @@ namespace SQLineCore
         public static AppSettings Settings { get; set; }
 
         public static List<TableInfo> Tables { get; set; } = new List<TableInfo>();
+        public static List<ViewInfo> Views { get; set; } = new List<ViewInfo>();
         #endregion
 
         #region Constructors
