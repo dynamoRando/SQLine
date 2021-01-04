@@ -4,6 +4,9 @@ using System.Text;
 
 namespace SQLineCore
 {
+    /// <summary>
+    /// Handles all application commands that are related to views in a database
+    /// </summary>
     internal static class AppCommandQuestionView
     {
         #region Public Methods

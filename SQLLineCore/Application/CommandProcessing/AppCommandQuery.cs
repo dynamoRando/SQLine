@@ -6,6 +6,9 @@ using System.Text;
 
 namespace SQLineCore
 {
+    /// <summary>
+    /// Handles any application commands related to the QUERY keyword
+    /// </summary>
     public static class AppCommandQuery
     {
 

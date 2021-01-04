@@ -4,6 +4,9 @@ using System;
 
 namespace SQLineCore
 {
+    /// <summary>
+    /// Handles any applications command that begin with the QUESTION keyword
+    /// </summary>
     public static class AppCommandQuestions
     {
         #region Private Fields
