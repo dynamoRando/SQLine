@@ -44,6 +44,14 @@ namespace SQLineCore
 
             return result;
         }
+
+        internal static List<string> ListViews()
+        {
+            var result = new List<string>();
+            result.Add($"Listing views from database {AppCache.CurrentDatabase} on server {AppCache.ServerName}");
+            AppCache.Views.ForEach(v => result.Add($"- {v.FullName}"));
+            return result;
+        }
         #endregion
 
         #region Private Methods
