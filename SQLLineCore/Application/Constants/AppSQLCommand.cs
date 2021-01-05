@@ -17,6 +17,7 @@ namespace SQLineCore
             internal const string GetTablesSchema = "SELECT c.name ColumnName, c.max_length ColumnMaxLength, c.is_nullable IsNullable, t.name ColumnDataType FROM sys.columns c JOIN sys.types t ON c.user_type_id = t.user_type_id join sys.objects o on c.object_id = o.object_id WHERE o.object_id = <objectId>";
             internal const string GetSystemTableInfo = "SELECT name FROM sys.databases";
             internal const string GetViews = "SELECT s.name SchemaName, v.name ViewName,v.object_id ObjectId FROM sys.views v INNER JOIN sys.schemas s ON v.schema_id = s.schema_id";
+            internal const string GetProcedures = "SELECT s.name SchemaName, p.name ProcedureName, p.object_id ObjectId FROM sys.procedures p INNER JOIN sys.schemas s on p.schema_id = s.schema_id";
         }
     }
 }

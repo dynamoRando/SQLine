@@ -110,6 +110,11 @@ namespace SQLineCore
                 result = AppCommandQuestionView.HandleCommand(command);
             }
 
+            if (command.StartsWith(AppCommands.QUESTION_STORED_PROCEDURE, StringComparison.CurrentCultureIgnoreCase))
+            {
+                result = AppCommandQuestionStoredProcedure.HandleCommand(command);
+            }
+
             return result;
         }
 

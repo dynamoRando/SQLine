@@ -85,6 +85,11 @@ namespace SQLineCore
         /// </summary>
         public const string QUESTION_VIEW = "? v";
 
+        /// <summary>
+        /// "? s"
+        /// </summary>
+        public const string QUESTION_STORED_PROCEDURE = "? s";
+
         public static List<string> GetCommands()
         {
             var result = new List<string>();
@@ -207,6 +212,14 @@ namespace SQLineCore
             command.CommandDescription = "Lists the views in the current database";
             command.CommandExamples = new List<string>();
             command.CommandExamples.Add(QUESTION_VIEW);
+
+            result.Add(command);
+
+            command = new AppCommandDetail();
+            command.CommandText = QUESTION_STORED_PROCEDURE;
+            command.CommandDescription = "Lists the stored procedures in the current database";
+            command.CommandExamples = new List<string>();
+            command.CommandExamples.Add(QUESTION_STORED_PROCEDURE);
 
             result.Add(command);
 
