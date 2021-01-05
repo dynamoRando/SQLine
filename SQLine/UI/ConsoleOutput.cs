@@ -6,6 +6,9 @@ using Terminal.Gui.Views;
 
 namespace SQLine
 {
+    /// <summary>
+    /// The output window. A subwindow of AppLine
+    /// </summary>
     static class ConsoleOutput
     {
         #region Public Properties

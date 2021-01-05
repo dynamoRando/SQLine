@@ -11,6 +11,9 @@ using core = SQLineCore;
 
 namespace SQLine
 {
+    /// <summary>
+    /// The console input window. A subwindow of AppLine
+    /// </summary>
     static class ConsoleInput
     {
         #region Public Properties

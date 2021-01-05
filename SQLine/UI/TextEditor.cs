@@ -7,6 +7,9 @@ using Terminal.Gui;
 
 namespace SQLine
 {
+    /// <summary>
+    /// The text editor window. A subwindow of AppLine
+    /// </summary>
     static class TextEditor
     {
         #region Public Fields

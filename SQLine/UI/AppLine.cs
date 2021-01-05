@@ -11,6 +11,9 @@ using SQLineCore;
 
 namespace SQLine
 {
+    /// <summary>
+    /// Represents the main UI window. From this window, all other sub-windows are added
+    /// </summary>
     public static class AppLine
     {
         #region Public Properties
