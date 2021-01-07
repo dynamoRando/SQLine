@@ -9,7 +9,15 @@ namespace SQLineCore
         #region Public Methods
         internal static List<string> HandleCommand(string command)
         {
-            throw new NotImplementedException();
+            var result = new List<string>();
+
+            if (command.Equals(AppCommands.QUESTION_STORED_PROCEDURE, StringComparison.CurrentCultureIgnoreCase))
+            {
+                AppStoredProcedureAction.GetProcedures();
+                result = AppStoredProcedureAction.ListProcedures();
+            }
+
+            return result;
         }
         #endregion
     }

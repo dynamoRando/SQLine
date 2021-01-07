@@ -23,6 +23,7 @@ namespace SQLineCore
 
         public static List<TableInfo> Tables { get; set; } = new List<TableInfo>();
         public static List<ViewInfo> Views { get; set; } = new List<ViewInfo>();
+        public static List<ProcedureInfo> Procedures { get; set; } = new List<ProcedureInfo>();
         #endregion
 
         #region Constructors

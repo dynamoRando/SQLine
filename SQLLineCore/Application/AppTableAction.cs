@@ -11,9 +11,6 @@ namespace SQLineCore
         #region Public Methods
         internal static List<string> GetTables()
         {
-            //var gettingTables = App.GettingTables;
-            //gettingTables?.Invoke(null, null);
-
             var result = new List<string>();
 
             var connString = AppConnectionString.SQLServer.GetCurrentConnectionString();
@@ -35,9 +32,6 @@ namespace SQLineCore
                     }
                 }
             }
-
-            //var gotTables = App.GotTables;
-            //gotTables?.Invoke(null, null);
 
             return result;
         }
